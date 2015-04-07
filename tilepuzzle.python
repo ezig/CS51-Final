@@ -1,11 +1,4 @@
-sealed abstract class Direction
-case object Left extends Direction
-case object Right extends Direction
-case object Up extends Direction
-case object Down extends Direction
-
 class TilePuzzle(n : Int)
-{
     val size : Int = n
     private var empty : Int = size * size - 1
     private var tiles : Vector[Int] =
