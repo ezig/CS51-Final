@@ -25,9 +25,9 @@ class TilePuzzle
 
         case dir
         when Direction::Left
-            newEmpty -= 1
-        when Direction::Right
             newEmpty += 1
+        when Direction::Right
+            newEmpty -= 1
         when Direction::Up
             newEmpty -= size
         when Direction::Down
@@ -42,3 +42,7 @@ class TilePuzzle
         @tiles[x], @tiles[y] = @tiles[y], @tiles[x]
     end
 end
+
+t = TilePuzzle.new(2)
+t.slide(Direction::Up)
+print(t.tiles)
