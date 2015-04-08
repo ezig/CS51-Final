@@ -56,7 +56,7 @@ class TilePuzzle(n : Int)
 
         swapTiles(empty, newEmpty)
         empty = newEmpty
-        validMoves : Vector[Direction] = getValidMoves
+        validMoves = getValidMoves
     }
 
     private def swapTiles(x : Int, y : Int)

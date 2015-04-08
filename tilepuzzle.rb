@@ -6,19 +6,30 @@ class Direction
 end
 
 class TilePuzzle
-    attr_reader :size, :tiles, :empty
+    attr_reader :size, :tiles, :empty, :solution
 
     def initialize(n)
         @size = n
         @tiles =* (1..(n ** 2 -1))
         @tiles.push(0)
         @empty = n * n - 1
+        @solution = Array.new(@tiles)
     end
 
     def shuffle()
         @tiles.shuffle!
         @empty = @tiles.index(0)
     end
+
+    def solved?
+        @tiles == @solution
+    end
+
+    def move(dirList)
+        dirList.each {|dir| slide(dir)}
+    end
+
+    private 
 
     def slide(dir)
         newEmpty = empty
@@ -34,7 +45,7 @@ class TilePuzzle
             newEmpty += @size
         end
 
-        self.swapTiles(empty, newEmpty)
+        swapTiles(empty, newEmpty)
         @empty = newEmpty
     end
 
@@ -44,5 +55,6 @@ class TilePuzzle
 end
 
 t = TilePuzzle.new(2)
-t.slide(Direction::Up)
-print(t.tiles)
+print(t.solved?)
+t.move([:up])
+print(t.solved?)

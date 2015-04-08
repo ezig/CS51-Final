@@ -1,0 +1,479 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                            %%
+%%    LaTeX Customizations    %%
+%%      Atanas Atanasov       %%
+%%                            %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Customizations styles
+
+% \newcommand{\boldsymbols}{}{}
+% \newcommand{\draft}{}
+% \newcommand{\showtodos}{}
+
+
+%% Packages
+\usepackage{amsmath, amsthm, amssymb}
+% \usepackage{mathabx} %% Use only if necessary (required for \widecheck)
+\usepackage{hyperref}
+\usepackage{array}
+\usepackage{fullpage}
+\usepackage{ifthen}
+\usepackage{ifpdf}
+\ifpdf
+%   \usepackage[
+%     pdftex,
+%     letterpaper,
+% %    includeheadfoot,
+%     centering=true,
+% %    margin=1in,
+%     bindingoffset=0in
+%   ]{geometry}
+  \usepackage[pdftex,final]{graphicx}
+  %\usepackage{psfragx}
+\else
+%   \usepackage[
+%     dvips,
+%     letterpaper,
+%  %   includeheadfoot,
+%     centering=true,
+% %    margin=1in,
+%     bindingoffset=0in
+%   ]{geometry}
+  \usepackage[dvips,final]{graphicx}
+  %\usepackage{psfragx}
+\fi
+% \usepackage{indentfirst}
+\usepackage{enumerate}
+% \usepackage{suffix}
+% \usepackage{float}
+\usepackage{listings}
+\usepackage{solarized-light}
+\usepackage[all,2cell,knot]{xy}
+\UseAllTwocells
+\SilentMatrices
+\SelectTips{cm}{}
+\xyoption{arc}
+\xyoption{pdf}
+% \usepackage[mathscr]{eucal}
+\usepackage{bm}
+\usepackage{mathrsfs}
+\usepackage{booktabs}
+% \usepackage{leftidx}
+\usepackage[vcentermath]{youngtab}
+\newcommand{\ysp}{\textrm{}}
+% \usepackage{mathdots}
+\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
+% \usepackage{sagetex}
+
+%% Show labels depending on the definition of \draft
+\ifthenelse{\isundefined{\draft}}{
+  \usepackage[final]{showlabels}  
+}{
+  \usepackage[inline]{showlabels}
+}
+
+
+%% Fonts
+
+%% Palatino fonts
+% \usepackage[sc]{mathpazo}
+% \linespread{1.05}         % Palatino needs more leading (space between lines)
+% \usepackage[T1]{fontenc}
+
+%% MinionPro fonts
+\IfFileExists{MinionPro.sty}{\usepackage{MinionPro}}{}
+
+
+%% Miscellaneous
+
+% \replacecommand is similar to \providecommand but it initializes the
+% command as necessary even if a previous definition exists.
+\newcommand{\replacecommand}[2]{\providecommand{#1}{}\renewcommand{#1}{#2}}
+
+%% Environments
+
+\theoremstyle{plain}
+% \numberwithin{equation}{section}
+\newtheorem{theorem}[equation]{Theorem}
+\newtheorem{proposition}[equation]{Proposition}
+\newtheorem{lemma}[equation]{Lemma}
+\newtheorem{corollary}[equation]{Corollary}
+% \newtheorem{claim}[equation]{Claim}
+\newtheorem{conjecture}[equation]{Conjecture}
+\newtheorem{observation}[equation]{Observation}
+
+\theoremstyle{definition}
+\newtheorem{definition}[equation]{Definition}
+\newtheorem{exercise}[equation]{Exercise}
+\newtheorem{question}[equation]{Question}
+% \newtheorem{problem}[equation]{Problem}
+\newtheorem{construction}[equation]{Construction}
+
+\theoremstyle{remark}
+\newtheorem{example}[equation]{Example}
+% \newtheorem{hint}[equation]{Hint}
+\newtheorem{remark}[equation]{Remark}
+\newtheorem{fact}[equation]{Fact}
+\newtheorem{warning}[equation]{Warning}
+
+%% Names theorem environment
+\newtheorem*{namedtheorem}{\theoremname}
+\newcommand{\theoremname}{}
+\newenvironment{named}[1]{\renewcommand{\theoremname}{#1}\begin{namedtheorem}}{\end{namedtheorem}}
+  
+%% Problem-set commands (also useful for worksheets, exams, etc.)
+% \newcounter{cnt_problem}
+% \setcounter{cnt_problem}{1}
+% \newcommand\problem[1][Problem]{\vspace{0.15in} \noindent {\hskip \labelsep {\bfseries #1 \arabic{cnt_problem}}} \addtocounter{cnt_problem}{1}}
+% \WithSuffix\newcommand\problem*[1]{\vspace{0.15in} \noindent {\hskip \labelsep {\bfseries #1}}}
+
+\newenvironment{claim}[1][Claim.]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{claim-mild}[1][Claim.]{{\bfseries #1} \hskip 0.2\labelsep}{}
+
+
+% \floatstyle{plain}
+% \newfloat{figure}{thp}{}
+% \floatname{figure}{Figure}
+% \numberwithin{figure}{section}
+
+%% Enumerate/itemize environments
+\newenvironment{itemize_packed}{
+\\[-20pt]
+\begin{itemize}
+  \setlength{\itemsep}{2pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+\newenvironment{enumerate_packed}[1][1.]{
+\\[-20pt]
+\begin{enumerate}[#1]
+  \setlength{\itemsep}{2pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+\newenvironment{enumeratea}
+{\begin{enumerate}[\upshape (a)]}
+{\end{enumerate}}
+
+\newenvironment{enumeratei}
+{\begin{enumerate}[\upshape (i)]}
+{\end{enumerate}}
+
+\newcommand{\topcell}[1]{\vtop{\null\hbox{#1}}}
+
+%% TODO command: renders only of \showtodos is defined
+\ifthenelse{\isundefined{\showtodos}}{
+  \newcommand{\todo}[1]{}
+}{
+  \newcommand{\todo}[1]{#1}
+}
+
+
+%% Special font symbols
+
+%% Bold letters: blackboard or regular bold font depending on the
+%% \boldsymbols command.
+\ifthenelse{\isundefined{\boldsymbols}}{
+  \newcommand{\mathbbf}[1]{\mathbb{#1}}
+}{
+  \newcommand{\mathbbf}[1]{\mathbf{#1}}
+}
+
+\newcommand{\Abb}{\ensuremath{\mathbbf{A}}}
+\newcommand{\Cbb}{\ensuremath{\mathbbf{C}}}
+\newcommand{\Fbb}{\ensuremath{\mathbbf{F}}}
+\newcommand{\Gbb}{\ensuremath{\mathbbf{G}}}
+\newcommand{\Hbb}{\ensuremath{\mathbbf{H}}}
+\newcommand{\Ibb}{\ensuremath{\mathbbf{I}}}
+\newcommand{\Nbb}{\ensuremath{\mathbbf{N}}}
+\newcommand{\Lbb}{\ensuremath{\mathbbf{L}}}
+\newcommand{\Obb}{\ensuremath{\mathbbf{O}}}
+\newcommand{\Pbb}{\ensuremath{\mathbbf{P}}}
+\newcommand{\Qbb}{\ensuremath{\mathbbf{Q}}}
+\newcommand{\Rbb}{\ensuremath{\mathbbf{R}}}
+\newcommand{\Tbb}{\ensuremath{\mathbbf{T}}}
+\newcommand{\Vbb}{\ensuremath{\mathbbf{V}}}
+\newcommand{\Zbb}{\ensuremath{\mathbbf{Z}}}
+
+%% Calligraphic letters
+\newcommand{\Ac}{\ensuremath{\mathcal{A}}}
+\newcommand{\Bc}{\ensuremath{\mathcal{B}}}
+\newcommand{\Cc}{\ensuremath{\mathcal{C}}}
+\newcommand{\Dc}{\ensuremath{\mathcal{D}}}
+\newcommand{\Ec}{\ensuremath{\mathcal{E}}}
+\newcommand{\Fc}{\ensuremath{\mathcal{F}}}
+\newcommand{\Gc}{\ensuremath{\mathcal{G}}}
+\newcommand{\Hc}{\ensuremath{\mathcal{H}}}
+\newcommand{\Ic}{\ensuremath{\mathcal{I}}}
+\newcommand{\Jc}{\ensuremath{\mathcal{J}}}
+\newcommand{\Kc}{\ensuremath{\mathcal{K}}}
+\newcommand{\Lc}{\ensuremath{\mathcal{L}}}
+\replacecommand{\Mc}{\ensuremath{\mathcal{M}}}
+\newcommand{\Nc}{\ensuremath{\mathcal{N}}}
+\newcommand{\Oc}{\ensuremath{\mathcal{O}}}
+\newcommand{\Pc}{\ensuremath{\mathcal{P}}}
+\newcommand{\Qc}{\ensuremath{\mathcal{Q}}}
+\newcommand{\Rc}{\ensuremath{\mathcal{R}}}
+\newcommand{\Sc}{\ensuremath{\mathcal{S}}}
+\newcommand{\Tc}{\ensuremath{\mathcal{T}}}
+\newcommand{\Uc}{\ensuremath{\mathcal{U}}}
+\newcommand{\Vc}{\ensuremath{\mathcal{V}}}
+\newcommand{\Wc}{\ensuremath{\mathcal{W}}}
+\newcommand{\Xc}{\ensuremath{\mathcal{X}}}
+
+%% Script letters
+\newcommand{\As}{\ensuremath{\mathscr{A}}}
+\newcommand{\Bs}{\ensuremath{\mathscr{B}}}
+\newcommand{\Cs}{\ensuremath{\mathscr{C}}}
+\newcommand{\Ds}{\ensuremath{\mathscr{D}}}
+\newcommand{\Fs}{\ensuremath{\mathscr{F}}}
+\newcommand{\Gs}{\ensuremath{\mathscr{G}}}
+\newcommand{\Hs}{\ensuremath{\mathscr{H}}}
+\newcommand{\Ks}{\ensuremath{\mathscr{K}}}
+\newcommand{\Ms}{\ensuremath{\mathscr{M}}}
+\newcommand{\Ss}{\ensuremath{\mathscr{S}}}
+\newcommand{\Ts}{\ensuremath{\mathscr{T}}}
+\newcommand{\Ws}{\ensuremath{\mathscr{W}}}
+% \newcommand{\Xs}{\ensuremath{\mathscr{X}}}
+\newcommand{\Zs}{\ensuremath{\mathscr{Z}}}
+
+%% Fraktur letters
+\renewcommand{\a}{\ensuremath{\mathfrak{a}}}
+\renewcommand{\b}{\ensuremath{\mathfrak{b}}}
+\renewcommand{\c}{\ensuremath{\mathfrak{c}}}
+\newcommand{\g}{\ensuremath{\mathfrak{g}}}
+% \newcommand{\h}{\ensuremath{\mathfrak{h}}}
+\newcommand{\m}{\ensuremath{\mathfrak{m}}}
+\newcommand{\n}{\ensuremath{\mathfrak{n}}}
+\renewcommand{\o}{\ensuremath{\mathfrak{o}}}
+\newcommand{\p}{\ensuremath{\mathfrak{p}}}
+\newcommand{\q}{\ensuremath{\mathfrak{q}}}
+\renewcommand{\r}{\ensuremath{\mathfrak{r}}}
+\newcommand{\s}{\ensuremath{\mathfrak{s}}}
+\renewcommand{\t}{\ensuremath{\mathfrak{t}}}
+\renewcommand{\u}{\ensuremath{\mathfrak{u}}}
+
+%% Miscellaneous
+\newcommand{\Cch}{\ensuremath{\check{C}}}
+\newcommand{\Hch}{\ensuremath{\check{H}}}
+\renewcommand{\d}{\ensuremath{\partial}}
+
+
+%% Operators
+\replacecommand{\Im}{\mathop{\textrm{Im}}\nolimits}
+\replacecommand{\Re}{\mathop{\textrm{Re}}\nolimits}
+\replacecommand{\H}{\mathop{\textrm{H}}\nolimits}
+\replacecommand{\h}{\mathop{\textrm{h}}\nolimits}
+\DeclareMathOperator{\pr}{pr}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Inn}{Inn}
+\DeclareMathOperator{\Out}{Out}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\Coker}{Coker}
+\DeclareMathOperator{\Sym}{Sym}
+\DeclareMathOperator{\Obj}{Obj}
+\DeclareMathOperator{\Mor}{Mor}
+\DeclareMathOperator{\Kom}{Kom}
+\DeclareMathOperator{\Gal}{Gal}
+\DeclareMathOperator{\Spec}{Spec}
+\DeclareMathOperator{\mSpec}{\mathfrak{m}Spec}
+\DeclareMathOperator{\Proj}{Proj}
+\DeclareMathOperator{\Tor}{Tor}
+\DeclareMathOperator{\Ext}{Ext}
+\DeclareMathOperator{\End}{End}
+\DeclareMathOperator{\Rep}{Rep}
+\DeclareMathOperator{\Ind}{Ind}
+\DeclareMathOperator{\Res}{Res}
+\DeclareMathOperator{\Ann}{Ann}
+\DeclareMathOperator{\Ass}{Ass}
+\DeclareMathOperator{\Frac}{Frac}
+\DeclareMathOperator{\Homc}{\mathcal{H}om}
+\DeclareMathOperator{\Extc}{\mathcal{E}xt}
+% \DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\cp}{cp}
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\ev}{ev}
+\DeclareMathOperator{\height}{ht}
+\DeclareMathOperator{\nil}{nil}
+\DeclareMathOperator*{\colim}{colim}
+\DeclareMathOperator{\codim}{codim}
+\DeclareMathOperator{\depth}{depth}
+\DeclareMathOperator{\ch}{ch}
+\DeclareMathOperator{\td}{td}
+\DeclareMathOperator{\characteristic}{char}
+\DeclareMathOperator{\proj}{proj}
+\DeclareMathOperator{\rad}{rad}
+\DeclareMathOperator{\Conv}{Conv}
+\DeclareMathOperator{\Hull}{Hull}
+\DeclareMathOperator{\cone}{cone}
+\DeclareMathOperator{\Supp}{Supp}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\Rank}{Rank}
+\DeclareMathOperator{\Span}{Span}
+\DeclareMathOperator{\Map}{Map}
+\DeclareMathOperator{\Mod}{Mod}
+\DeclareMathOperator{\MCG}{MCG}
+\DeclareMathOperator{\AMCG}{AMCG}
+\DeclareMathOperator{\Diff}{Diff}
+\DeclareMathOperator{\Der}{Der}
+\DeclareMathOperator{\OutDer}{OutDer}
+\DeclareMathOperator{\Cl}{Cl}
+\DeclareMathOperator{\CaCl}{CaCl}
+\DeclareMathOperator{\Pic}{Pic}
+\DeclareMathOperator{\Jac}{Jac}
+\DeclareMathOperator{\Bl}{Bl}
+\DeclareMathOperator{\Fl}{Fl}
+\DeclareMathOperator{\Gr}{Gr}
+\DeclareMathOperator{\gr}{gr}
+\DeclareMathOperator{\VF}{VF}
+\DeclareMathOperator{\II}{II}
+\DeclareMathOperator{\ad}{ad}
+\DeclareMathOperator{\Ad}{Ad}
+\DeclareMathOperator{\Adj}{Adj}
+\DeclareMathOperator{\Pf}{Pf}
+\DeclareMathOperator{\PD}{PD}
+\DeclareMathOperator{\Vol}{Vol}
+\DeclareMathOperator{\vol}{vol}
+\DeclareMathOperator{\Ric}{Ric}
+\DeclareMathOperator{\Lie}{Lie}
+\DeclareMathOperator{\Sh}{Sh}
+\DeclareMathOperator{\PSh}{PSh}
+\DeclareMathOperator{\Sing}{Sing}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\divisor}{div}
+\DeclareMathOperator{\divergence}{div}
+\DeclareMathOperator{\genus}{genus}
+\DeclareMathOperator{\Hilb}{Hilb}
+\DeclareMathOperator{\SL}{SL}
+\DeclareMathOperator{\GL}{GL}
+\DeclareMathOperator{\PGL}{PGL}
+\DeclareMathOperator{\PSL}{PSL}
+\renewcommand{\O}{\mathop{\textnormal{O}}\nolimits}
+\DeclareMathOperator{\SO}{SO}
+\DeclareMathOperator{\U}{U}
+\DeclareMathOperator{\Sp}{Sp}
+\DeclareMathOperator{\gl}{\mathfrak{gl}}
+\DeclareMathOperator{\so}{\mathfrak{so}}
+\DeclareMathOperator{\su}{\mathfrak{su}}
+\renewcommand{\sl}{\mathop{\mathfrak{sl}}\nolimits}
+\DeclareMathOperator{\ord}{ord}
+\DeclareMathOperator{\simp}{simp}
+\DeclareMathOperator{\cell}{cell}
+\DeclareMathOperator{\ab}{ab}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\res}{res}
+\DeclareMathOperator{\interior}{int}
+\DeclareMathOperator{\tors}{tors}
+\DeclareMathOperator{\arccot}{arccot}
+\DeclareMathOperator{\arcsec}{arcsec}
+\DeclareMathOperator{\arccsc}{arccsc}
+\DeclareMathOperator{\sech}{sech}
+\DeclareMathOperator{\csch}{csch}
+\DeclareMathOperator{\arcsinh}{arcsinh}
+\DeclareMathOperator{\arccosh}{arccosh}
+\DeclareMathOperator{\arctanh}{arctanh}
+\DeclareMathOperator{\arccoth}{arccoth}
+\DeclareMathOperator{\arcsech}{arcsech}
+\DeclareMathOperator{\arccsch}{arccsch}
+
+%% Useful subscripts: opposite, reduced, singularities, etc.
+\newcommand{\op}{\textrm{op}}
+\newcommand{\red}{\textrm{red}}
+\newcommand{\sing}{\textrm{sing}}
+\newcommand{\alg}{\textrm{alg}}
+\newcommand{\sm}{\textrm{sm}}
+\newcommand{\cl}{\textrm{cl}}
+\newcommand{\et}{\textrm{\'et}}
+\newcommand{\cart}{\textrm{cart}}
+\newcommand{\eff}{\textrm{eff}}
+
+%% Various categories
+\newcommand{\Set}{\textrm{\textbf{Set}}}
+\newcommand{\EqRel}{\textrm{\textbf{EqRel}}}
+\newcommand{\Groupoid}{\textrm{\textbf{Groupoid}}}
+\newcommand{\Cat}{\textrm{\textbf{Cat}}}
+\newcommand{\Ab}{\textrm{\textbf{Ab}}}
+\newcommand{\Sch}{\textrm{\textbf{Sch}}}
+\newcommand{\Top}{\textrm{\textbf{Top}}}
+\newcommand{\hTop}{\textrm{\textbf{hTop}}}
+\newcommand{\QCoh}{\textrm{\textbf{QCoh}}}
+\newcommand{\QCohAlg}{\textrm{\textbf{QCohAlg}}}
+\newcommand{\AffMor}{\textrm{\textbf{AffMor}}}
+
+
+%% Exterior power
+\newcommand{\extp}{\textstyle\bigwedge\nolimits}
+
+%% The typical modulo commands leave too much space before, so we
+%% replace them.
+% \newcommand{\dmod}{\textrm{-}\textbf{mod}}
+\newcommand{\dmod}{\textrm{-mod}}
+\renewcommand{\mod}[1]{\ensuremath{\;\textrm{mod }{#1}}}
+\renewcommand{\pmod}[1]{\ensuremath{\;(\textrm{mod }{#1})}}
+
+
+%% Shortcuts
+\newcommand{\x}{\ensuremath{\times}}
+\newcommand{\wtilde}[1]{\widetilde{#1}}
+\newcommand{\what}[1]{\widehat{#1}}
+\newcommand{\wcup}{\smallsmile}
+\newcommand{\wcap}{\smallfrown}
+\newcommand{\cn}{\colon}
+\newcommand{\rarr}{\ifinner\rightarrow\else\longrightarrow\fi}
+\newcommand{\Rarr}{\ifinner\Rightarrow\else\Longrightarrow\fi}
+\newcommand{\larr}{\ifinner\leftarrow\else\longleftarrow\fi}
+\newcommand{\Larr}{\ifinner\Leftarrow\else\Longleftarrow\fi}
+\newcommand{\hrarr}{\hookrightarrow}
+\newcommand{\hlarr}{\hookleftarrow}
+\newcommand{\xrarr}{\xrightarrow}
+\newcommand{\xlarr}{\xleftarrow}
+\newcommand{\drarr}{\dashrightarrow}
+\newcommand{\dlarr}{\dashleftarrow}
+\newcommand{\acts}{\curvearrowright}
+\newcommand{\slashsim}{/\hspace{-4pt}\sim}
+% \renewcommand{\/}{/\hspace{-3pt}/}
+\newcommand{\groupoid}[4]{
+  \ifinner
+  {\xymatrix@1@C=15pt{
+      {#1} \ar@<3pt>[r]^-{#3} \ar@<-3pt>[r]_-{#4} & {#2}
+  }}
+  \else
+  {\xymatrix{
+      {#1} \ar@<3pt>[r]^-{#3} \ar@<-3pt>[r]_-{#4} & {#2}
+  }}
+  \fi
+}
+
+
+%% Line spacing
+% \usepackage{setspace}
+% \doublespacing
+%% or:
+% \onehalfspacing
+
+
+%% Hypenations
+
+\hyphenation{Groth-en-dieck}
+
+%% Tweaks
+
+\renewcommand{\textrm}{\textnormal}
+\renewcommand{\phi}{\varphi}
+\renewcommand{\epsilon}{\varepsilon}
+
+%% Useful if typing in a book-like document class.
+% \setcounter{tocdepth}{2}
+% \numberwithin{subsection}{section}
+% \numberwithin{section}{chapter}
+
+%% Use if you want to change the name of a "Chapter". For example, if
+%% typing notes it may be useful to replace with "Lecture" instead.
+% \renewcommand{\chaptername}{Chapter}
