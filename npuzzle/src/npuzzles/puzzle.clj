@@ -34,14 +34,16 @@
 
 (defn slide
 	"Given a direction, moves puzzle in that direction if it is a valid move"
-	[{cols :cols tiles :tiles :as puzzle} direction]
+	[{cols :cols rows :rows tiles :tiles :as puzzle} direction]
 	(if (some #{direction} (valid-directions puzzle))
-		(let [emptyP (find-tile puzzle 0)]
-			(case direction
-				:up (swap puzzle emptyP (- emptyP cols))
-				:down (swap puzzle emptyP (+ emptyP cols))
-				:left (swap puzzle emptyP (- emptyP 1))
-				:right (swap puzzle emptyP (+ emptyP 1))))
+		(let [emptyP (find-tile puzzle 0)
+			newP (case direction
+				:up (- emptyP cols)
+				:down (+ emptyP cols)
+				:left (- emptyP 1)
+				:right (+ emptyP 1))]
+				
+			{:rows rows :cols cols :tiles (swap tiles emptyP newP)})
 		puzzle))
 
 ;TODO: NOT SURE IF THIS IS CORRECT FOR PUZZLES WHERE rows != cols
@@ -78,6 +80,6 @@
 				(recur (+ inv (count (filter #(< % hd) tl))) tl)))))
 
 (defn swap
-	"Given a puzzle and two indices, swaps the tiles at those indices"
-	[{rows :rows cols :cols v :tiles} i1 i2]
-	{:rows rows :cols cols :tiles (assoc v i1 (v i2), i2 (v i1))})
+	"Given a vector and two indices, swaps the values at those indices"
+	[v i1 i2]
+	(assoc v i1 (v i2), i2 (v i1)))
