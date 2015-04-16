@@ -27,7 +27,7 @@
 
 (defn to-string
 	"Given a puzzle, returns a string representation"
-	[{cols :cols rows :rows tiles :tiles :as puzzle}]
+	[{rows :rows tiles :tiles}]
 	(loop [string (str (first tiles))
 		   lst (rest tiles)]
 		   (if (empty? lst)
@@ -36,6 +36,11 @@
 				   (if (= (mod (count lst) rows) 0)
 				   	   (recur (str string "\\n" hd) tl)
 				   	   (recur (str string hd) tl))))))
+
+(defn solved?
+	"Given a puzzle, returns true if it is solved"
+	[{rows :rows cols :cols tiles :tiles}]
+	(= tiles (concat (range 1 (* rows cols)) (list 0))))
 
 (defn swap
 	"Given a vector and two indices, swaps the values at those indices"
