@@ -32,6 +32,18 @@
 		       (= zeroCol 0) (= zeroCol (- cols 1))]]
 		(remove nil? (map #(when-not %1 %2) valid [:up :down :left :right]))))
 
+(defn slide
+	"Given a direction, moves puzzle in that direction if it is a valid move"
+	[{cols :cols tiles :tiles :as puzzle} direction]
+	(if (some #{direction} (valid-directions puzzle))
+		(let [emptyP (find-tile puzzle 0)]
+			(case direction
+				:up (swap puzzle emptyP (- emptyP cols))
+				:down (swap puzzle emptyP (+ emptyP cols))
+				:left (swap puzzle emptyP (- emptyP 1))
+				:right (swap puzzle emptyP (+ emptyP 1))))
+		puzzle))
+
 ;TODO: NOT SURE IF THIS IS CORRECT FOR PUZZLES WHERE rows != cols
 (defn solvable?
 	"Returns true if a given puzzle is solvable, false otherwise"
@@ -39,6 +51,11 @@
 	(or
 		(and (odd? (* rows cols)) (even? (inversions puzzle)))
 		(= (even? (inversions puzzle)) (odd? (row-of-tile puzzle 0)))))
+
+(defn find-tile
+	"Returns the index of a tile in a puzzle"
+	[{tiles :tiles} tile]
+	(.indexOf tiles tile))
 
 (defn row-of-tile
 	"Returns the row that a given tile is on"
@@ -61,6 +78,6 @@
 				(recur (+ inv (count (filter #(< % hd) tl))) tl)))))
 
 (defn swap
-	"Given a vector and two indices, swaps the values"
-	[v i1 i2]
-	(assoc v i1 (v i2), i2 (v i1)))
+	"Given a puzzle and two indices, swaps the tiles at those indices"
+	[{rows :rows cols :cols v :tiles} i1 i2]
+	{:rows rows :cols cols :tiles (assoc v i1 (v i2), i2 (v i1))})
