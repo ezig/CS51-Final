@@ -97,6 +97,7 @@
 (defn solvable?
 	"Returns true if a given puzzle is solvable, false otherwise"
 	[{rows :rows cols :cols :as puzzle}]
-	(or
-		(and (odd? (* rows cols)) (even? (inversions puzzle)))
-		(= (even? (inversions puzzle)) (odd? (row-of-tile puzzle 0)))))
+	(let [is_odd (odd? (* rows cols))]
+		(or
+	  		(and is_odd (even? (inversions puzzle)))
+	  		(and (not is_odd) (= (even? (inversions puzzle)) (odd? (row-of-tile puzzle 0)))))))
