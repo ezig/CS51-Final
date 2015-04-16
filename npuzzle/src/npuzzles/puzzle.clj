@@ -3,6 +3,9 @@
 (defrecord Puzzle [rows cols tiles])
 
 (defn gen-puzzle
+	"Given two dimensions, generates a random solvable puzzle.
+	 Given dimensions and tiles, generates puzzle with given tiles
+	  (intended only for testing)"
      ([rows cols] (random-solvable-puzzle rows cols))
      ([rows cols tiles] (Puzzle. rows cols tiles)))
 
@@ -19,6 +22,16 @@
 	[r c]
 	{:rows r, :cols c, :tiles (shuffle (range (* r c)))})
 
+;TODO: Probably a cleaner way to write this
+(defn valid-directions
+	"Given a puzzle, returns a list of valid directions"
+	[{rows :rows cols :cols :as puzzle}]
+	(let [zeroRow (row-of-tile puzzle 0)
+		  zeroCol (col-of-tile puzzle 0)
+		  valid [(= zeroRow 0) (= zeroRow (- rows 1))
+		       (= zeroCol 0) (= zeroCol (- cols 1))]]
+		(remove nil? (map #(when-not %1 %2) valid [:up :down :left :right]))))
+
 ;TODO: NOT SURE IF THIS IS CORRECT FOR PUZZLES WHERE rows != cols
 (defn solvable?
 	"Returns true if a given puzzle is solvable, false otherwise"
@@ -31,6 +44,11 @@
 	"Returns the row that a given tile is on"
 	[{rows :rows tiles :tiles} tile]
 	(quot (.indexOf tiles tile) rows))
+
+(defn col-of-tile
+	"Returns the col that a given tile is on"
+	[{cols :rows tiles :tiles} tile]
+	(mod (.indexOf tiles tile) cols))
 
 (defn inversions
 	"Given a puzzle, returns the number of inversions"
