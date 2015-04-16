@@ -1,5 +1,6 @@
 ; Puzzle record has integer number of rows, columsns
 ; and an row * column length vector of tiles [0, row * column)
+; Puzzle is solved if tiles are in increasing order and zero is in bottom right
 (defrecord Puzzle [rows cols tiles])
 
 (defn random-puzzle
@@ -24,7 +25,18 @@
      ([rows cols] (random-solvable-puzzle rows cols))
      ([rows cols tiles] (Puzzle. rows cols tiles)))
 
-;TODO: Probably a cleaner way to write this
+(defn to-string
+	"Given a puzzle, returns a string representation"
+	[{cols :cols rows :rows tiles :tiles :as puzzle}]
+	(loop [string (str (first tiles))
+		   lst (rest tiles)]
+		   (if (empty? lst)
+		   	   string
+		   	   (let [hd (first lst) tl (rest lst)]
+				   (if (= (mod (count lst) rows) 0)
+				   	   (recur (str string "\\n" hd) tl)
+				   	   (recur (str string hd) tl))))))
+
 (defn swap
 	"Given a vector and two indices, swaps the values at those indices"
 	[v i1 i2]
