@@ -27,6 +27,7 @@
 *.sqlite
 *.lein-repl-history
 *.nrepl-port
+*.lein-failures
  
 # OS generated files #
 ######################
