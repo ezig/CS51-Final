@@ -7,11 +7,7 @@
 
 ;PUBLIC FUNCTIONS
 
-(defn random-puzzle
-	"Given a number of rows and columns, creates random puzzle"
-	[r c]
-	{:rows r, :cols c, :tiles (shuffle (range (* r c)))})
-
+(declare random-solvable-puzzle)
 (declare solvable?)
 (defn random-solvable-puzzle
 	"Given rows and columns, generates a random puzzle that is solvable"
@@ -103,11 +99,23 @@
 			(let [hd (first lst) tl (rest lst)]
 				(recur (+ inv (count (filter #(< % hd) tl))) tl)))))
 
-;TODO: NOT SURE IF THIS IS CORRECT FOR PUZZLES WHERE rows != cols
 (defn- solvable?
 	"Returns true if a given puzzle is solvable, false otherwise"
 	[{rows :rows cols :cols :as puzzle}]
 	(let [is_odd (odd? (* rows cols))]
 		(or
-	  		(and is_odd (even? (inversions puzzle)))
-	  		(and (not is_odd) (= (even? (inversions puzzle)) (odd? (row-of-tile puzzle 0)))))))
+	  		(and (odd? cols) (even? (inversions puzzle)))
+	  		(and 
+	  			(even? cols)
+	  			(even? rows)
+	  			(even? (+ (row-of-tile 0) (inversions puzzle))))
+	  		(and 
+	  			(even? cols)
+	  			(odd? rows)
+	  			(odd? (+ (row-of-tile 0) (inversions puzzle)))))))
+
+
+(defn- random-puzzle
+	"Given a number of rows and columns, creates random puzzle"
+	[r c]
+	{:rows r, :cols c, :tiles (shuffle (range (* r c)))})
