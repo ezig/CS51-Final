@@ -48,8 +48,8 @@
 	[{rows :rows cols :cols :as puzzle}] 
 	(let [zeroRow (row-of-tile puzzle 0)
 		  zeroCol (col-of-tile puzzle 0)]
-		  {:up (not (= zeroRow 0)), :down (not (= zeroRow (- rows 1))),
-		   :left (not (= zeroCol 0)), :right (not (= zeroCol (- cols 1)))}))
+		  {:up (not (= zeroRow (- rows 1))), :down (not (= zeroRow 0)),
+		   :left (not (= zeroCol (- cols 1))) , :right (not (= zeroCol 0))}))
 
 (declare swap)
 (declare find-tile)
@@ -59,10 +59,10 @@
 	(if (get (valid-directions puzzle) direction)
 		(let [emptyP (find-tile puzzle 0)
 			newP (case direction
-				:up (- emptyP cols)
-				:down (+ emptyP cols)
-				:left (- emptyP 1)
-				:right (+ emptyP 1))]
+				:up (+ emptyP cols)
+				:down (- emptyP cols)
+				:left (+ emptyP 1)
+				:right (- emptyP 1))]
 			{:rows rows :cols cols :tiles (swap tiles emptyP newP)})
 		puzzle))
 
