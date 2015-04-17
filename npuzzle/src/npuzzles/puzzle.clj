@@ -7,7 +7,7 @@
 
 ;PUBLIC FUNCTIONS
 
-(declare random-solvable-puzzle)
+(declare random-puzzle)
 (declare solvable?)
 (defn random-solvable-puzzle
 	"Given rows and columns, generates a random puzzle that is solvable"
