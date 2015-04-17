@@ -114,7 +114,6 @@
 	  			(odd? rows)
 	  			(odd? (+ (row-of-tile 0) (inversions puzzle)))))))
 
-
 (defn- random-puzzle
 	"Given a number of rows and columns, creates random puzzle"
 	[r c]
