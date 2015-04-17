@@ -5,6 +5,8 @@
 ; Puzzle is solved if tiles are in increasing order and zero is in bottom right
 (defrecord Puzzle [rows cols tiles])
 
+;PUBLIC FUNCTIONS
+
 (defn random-puzzle
 	"Given a number of rows and columns, creates random puzzle"
 	[r c]
@@ -68,6 +70,8 @@
 	"Given a puzzle, returns true if it is solved"
 	[{rows :rows cols :cols tiles :tiles}]
 	(= tiles (concat (range 1 (* rows cols)) (list 0))))
+
+;PRIVATE FUNCTIONS
 
 (defn- swap
 	"Given a vector and two indices, swaps the values at those indices"
