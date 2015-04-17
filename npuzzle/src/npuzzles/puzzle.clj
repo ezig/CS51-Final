@@ -31,14 +31,14 @@
 
 (defn to-string
 	"Given a puzzle, returns a string representation"
-	[{rows :rows tiles :tiles}]
+	[{cols :cols tiles :tiles}]
 	(loop [string (str (first tiles))
 		   lst (rest tiles)]
 		   (if (empty? lst)
 		   	   string
 		   	   (let [hd (first lst) tl (rest lst)]
-				   (if (= (mod (count lst) rows) 0)
-				   	   (recur (str string "\\n" hd) tl)
+				   (if (= (mod (count lst) cols) 0)
+				   	   (recur (str string "\n" hd) tl)
 				   	   (recur (str string hd) tl))))))
 
 (declare row-of-tile)
@@ -85,8 +85,8 @@
 
 (defn- row-of-tile
 	"Returns the row that a given tile is on"
-	[{rows :rows :as puzzle} tile]
-	(quot (find-tile puzzle tile) rows))
+	[{cols :cols :as puzzle} tile]
+	(quot (find-tile puzzle tile) cols))
 
 (defn- col-of-tile
 	"Returns the col that a given tile is on"
