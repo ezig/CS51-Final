@@ -74,13 +74,14 @@
 	 heuristic function"
 	 [{cols :cols rows :rows tiles :tiles :as puzzle}]
 	 (let [final_puzzle (gen-puzzle rows cols (concat (range 1 (* rows cols)) (list 0)))]
-	 (loop [d 0 lst tiles]
+	 (loop [d 0 
+	 	    lst tiles]
 	 	 (if empty? lst)
 	 	     d
 	 	     (let [hd (first lst) tl (rest lst)
 	               column (col-of-tile puzzle hd) row (row-of-tile puzzle hd)]
-	               (recur (+ (abs (- row (row-of-tile final_puzzle hd))) 
-	           	             (abs (- column (col-of-tile final_puzzle hd))))
+	               (recur (+ d (+ (abs (- row (row-of-tile final_puzzle hd))) 
+	           	             (abs (- column (col-of-tile final_puzzle hd)))))
 	                          tl))
 	 	 )))
 
