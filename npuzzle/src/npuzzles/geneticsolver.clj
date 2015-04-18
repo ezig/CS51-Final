@@ -33,9 +33,8 @@
 	"Given a puzzle, returns a random valid direction that is NOT dir
 	Based on the assumption that the puzzle has 2 valid moves in every state"
  	[puzzle dir]
- 	(let [moves (valid-directions puzzle)
- 		  valid (into {} (filter #(and (val %) (not (= (key %) dir))) moves))]
- 		(rand-nth (keys valid))))
+ 	(let [valid (filter #(not (= % dir)) (valid-directions puzzle))]
+ 		(rand-nth valid)))
 
 (defn opposite-dir
 	"Given a direction, returns the opposite"
