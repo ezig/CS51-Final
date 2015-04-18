@@ -40,19 +40,20 @@
 (declare row-of-tile)
 (declare col-of-tile)
 (defn valid-directions
-	"Given a puzzle, returns a hash map of directions and associated booleans"
+	"Given a puzzle, returns a list of direction keywords of valid moves"
 	[{rows :rows cols :cols :as puzzle}] 
 	(let [zeroRow (row-of-tile puzzle 0)
-		  zeroCol (col-of-tile puzzle 0)]
-		  {:up (not (= zeroRow (- rows 1))), :down (not (= zeroRow 0)),
-		   :left (not (= zeroCol (- cols 1))) , :right (not (= zeroCol 0))}))
+		  zeroCol (col-of-tile puzzle 0)
+		  moves {:up (not (= zeroRow (- rows 1))), :down (not (= zeroRow 0)),
+		   :left (not (= zeroCol (- cols 1))) , :right (not (= zeroCol 0))}]
+		(keys (into {} (filter #(val %) moves)))))
 
 (declare swap)
 (declare find-tile)
 (defn slide
 	"Given a direction, moves puzzle in that direction if it is a valid move"
 	[{cols :cols rows :rows tiles :tiles :as puzzle} direction]
-	(if (get (valid-directions puzzle) direction)
+	(if (not (nil? (some #{direction} (valid-directions puzzle))))
 		(let [emptyP (find-tile puzzle 0)
 			newP (case direction
 				:up (+ emptyP cols)
