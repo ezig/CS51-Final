@@ -1,4 +1,5 @@
-(ns npuzzles.geneticsolver)
+(ns npuzzles.geneticsolver
+	(:require [npuzzles.puzzle :as puzzle]))
 
 ;PUBLIC FUNCTIONS
 

@@ -1,6 +1,7 @@
 (ns npuzzles.core
 	(:require [npuzzles.puzzle :as puzzle])
 	(:require [npuzzles.astar :as astar])
+	(:require [npuzzles.geneticsolver :as genetic])
   	(:gen-class))
 
 (defn -main
