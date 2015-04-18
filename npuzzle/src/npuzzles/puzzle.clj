@@ -78,11 +78,11 @@
 	 	    lst tiles]
 	 	 (if empty? lst)
 	 	     d
-	 	     (let [hd (first lst) tl (rest lst)
-	               column (col-of-tile puzzle hd) row (row-of-tile puzzle hd)]
+	 	     (let [hd (first lst) tl (rest lst)]
+	 	     (do (let [column (col-of-tile puzzle hd) row (row-of-tile puzzle hd)]
 	               (recur (+ d (+ (abs (- row (row-of-tile final_puzzle hd))) 
 	           	             (abs (- column (col-of-tile final_puzzle hd)))))
-	                          tl))
+	                          tl))))
 	 	 )))
 
 ;PRIVATE FUNCTIONS
