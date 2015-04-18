@@ -2,8 +2,15 @@
   (:require [clojure.test :refer :all]
             [npuzzles.puzzle :as puzzle :refer :all]))
 
+(deftest abs
+	(testing "abs")
+		(def abs #'puzzle/abs)
+		(is (= (abs 0) 0))
+		(is (= (abs 98) 98))
+		(is (= (abs -1234) 1234)))
+
 (deftest swap-test
-	(testing "Swap")
+	(testing "swap")
 		(def swap #'puzzle/swap)
 		(let [v [1 2 3 4 5]]
 			(is (= (swap v 0 1) [2 1 3 4 5]))
