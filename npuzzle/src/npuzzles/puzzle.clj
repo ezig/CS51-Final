@@ -127,13 +127,14 @@
 	  		(and 
 	  			(even? cols)
 	  			(even? rows)
-	  			(even? (+ (row-of-tile 0) (inversions puzzle))))
+	  			(even? (+ (row-of-tile puzzle 0) (inversions puzzle))))
 	  		(and 
 	  			(even? cols)
 	  			(odd? rows)
-	  			(odd? (+ (row-of-tile 0) (inversions puzzle)))))))
+	  			(odd? (+ (row-of-tile puzzle 0) (inversions puzzle)))))))
 
 (defn- random-puzzle
-	"Given a number of rows and columns, creates random puzzle"
+	"Given a number of rows and columns, creates random puzzle
+	MAY NOT BE SOLVABLE. Unsolvable puzzles should never be publically avaible"
 	[r c]
 	{:rows r, :cols c, :tiles (shuffle (range (* r c)))})
