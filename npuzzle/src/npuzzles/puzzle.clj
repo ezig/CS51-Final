@@ -67,25 +67,26 @@
 	[{rows :rows cols :cols tiles :tiles}]
 	(= tiles (concat (range 1 (* rows cols)) (list 0))))
 
-(defn abs [n] (max n (- n)))
-
+(declare abs)
 (defn manhattan-distance
 	"Given a Puzzle, calculates its fitness using the Manhattan Distance 
 	 heuristic function"
-	 [{cols :cols rows :rows tiles :tiles :as puzzle}]
-	 (let [final_puzzle (gen-puzzle rows cols (concat (range 1 (* rows cols)) (list 0)))]
-	 (loop [d 0 
+	[{cols :cols rows :rows tiles :tiles :as puzzle}]
+	(loop [d 0 
 		   lst tiles]
-	 	 (if (empty? lst)
-	 	     d
-	 	     (let [hd (first lst) tl (rest lst)]
-	 	     (do (let [column (col-of-tile puzzle hd) row (row-of-tile puzzle hd)]
-	               (recur (+ d (+ (abs (- row (row-of-tile final_puzzle hd))) 
-	           	             (abs (- column (col-of-tile final_puzzle hd)))))
-	                          tl)))))
-	 	 )))
+	 	(if (empty? lst)
+	 	    d
+	 	    (let [hd (first lst) tl (rest lst)
+ 	     		  final_index (mod (- hd 1) (* rows cols))
+	 	     	  final_row (quot final_index cols)
+	 	     	  final_col (mod final_index cols)
+				  column (col-of-tile puzzle hd)
+				  row (row-of-tile puzzle hd)]
+            	(recur (+ d (+ (abs (- row final_row)) (abs (- column final_col))))
+            		tl)))))
 
 ;PRIVATE FUNCTIONS
+(defn- abs [n] (max n (- n)))
 
 (defn- swap
 	"Given a vector and two indices, swaps the values at those indices"
