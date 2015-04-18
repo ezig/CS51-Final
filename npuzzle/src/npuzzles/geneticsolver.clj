@@ -1,5 +1,5 @@
 (ns npuzzles.geneticsolver
-	(:require [npuzzles.puzzle :as puzzle]))
+	(:use [npuzzles.puzzle]))
 
 ;PUBLIC FUNCTIONS
 
@@ -10,39 +10,49 @@
 	 or Nil if a solution is not found within the specified limits"
 	[puzzle generations phases])
 
-;PRIVATE FUNCTIONS
+; PRIVATE FUNCTIONS
+; TODO: PRIVATIZE THESE WHEN DONE TESTING
 
-(defn- run-phase
+(defn run-phase
 	"Given a starting puzzle state, generates a population of pop-size
 	 chromosomes and then runs num-gens number of generations within the phase.
 	 run-phase will return a solution as soon as it finds one, otherwise
 	 return the best chromosome from the phase"
 	[puzzle pop-size num-gens])
 
-(defn- generate-population
+(defn generate-population
 	"Given an initial pop-size, creates list random chromosomes"
 	[pop-size])
 
-(defn- generate-chromosome
+(defn generate-chromosome
 	"Given a starting puzzle state, make moves number of random (valid) moves
 	to build a list of puzzle states to form a chromosome."
 	[puzzle moves])
 
-(defn- random-dir
-	"Given a puzzle, returns a random valid direction that is NOT dir"
- 	[puzzle dir])
+(defn random-dir
+	"Given a puzzle, returns a random valid direction that is NOT dir
+	Based on the assumption that the puzzle has 2 valid moves in every state"
+ 	[puzzle dir]
+ 	(let [moves (valid-directions puzzle)
+ 		  valid (into {} (filter #(and (val %) (not (= (key %) dir))) moves))]
+ 		(rand-nth (keys valid))))
 
-(defn- opposite-dir
+(defn opposite-dir
 	"Given a direction, returns the opposite"
-	 [dir])
+	 [dir]
+	 (case dir
+	 	:up :down
+	 	:down :up
+	 	:left :right
+	 	:right :left))
 
-(defn- mutation
+(defn mutation
 	"Given a chromosome, extend the chromosome create an- other valid puzzle
 	by moving the current puzzle. If this results in a chromosome beyond
 	max-size, the chromosome will be truncated randomly"
 	[chromosome max-size])
 
-(defn- crossover
+(defn crossover
 	"Given two chromosomes, finds the points in the chromosomes where
 	 the puzzle states are the same, picks a random point from this list,
 	 and returns a new chromosome that takes the leading part of the first
