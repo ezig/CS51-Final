@@ -44,4 +44,9 @@
 			(is (= (row-of-tile p3 4) 1))
 			(is (= (row-of-tile p3 0) 1))))
 
+(deftest manhattan-distance-test
+	(testing "manhattan-distance")
+	    (let [p1 (gen-puzzle 3 3 [1 2 3 4 5 6 7 0 8])]
+	    	(is (= (manhattan-distance p1) 0))))
+
 			
