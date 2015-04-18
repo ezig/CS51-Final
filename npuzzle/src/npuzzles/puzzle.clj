@@ -75,7 +75,7 @@
 	 [{cols :cols rows :rows tiles :tiles :as puzzle}]
 	 (let [final_puzzle (gen-puzzle rows cols (concat (range 1 (* rows cols)) (list 0)))]
 	 (loop [d 0 
-	 	    lst tiles]
+		   lst tiles]
 	 	 (if (empty? lst)
 	 	     d
 	 	     (let [hd (first lst) tl (rest lst)]

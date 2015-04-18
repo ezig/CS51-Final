@@ -46,7 +46,17 @@
 
 (deftest manhattan-distance-test
 	(testing "manhattan-distance")
-	    (let [p1 (gen-puzzle 3 3 [1 2 3 4 5 6 7 0 8])]
-	    	(is (= (manhattan-distance p1) 0))))
+	    (let [p1 (gen-puzzle 3 3 [1 2 3 4 5 6 7 0 8])
+	    	  p2 (gen-puzzle 4 4 [15 1 2 3 4 5 6 7 8 9 10 11 0 13 14 12])
+	    	  p3 (gen-puzzle 3 3 [2 1 3 5 4 0 6 7 8])
+	    	  p4 (gen-puzzle 3 3 [6 4 7 8 5 0 3 2 1])
+	    	  p5 (gen-puzzle 4 4 [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 0])]
+	    	(is (= (manhattan-distance p1) 2))
+	    	(is (= (manhattan-distance p2) 28))
+	    	(is (= (manhattan-distance p3) 10))
+	    	(is (= (manhattan-distance p4) 22))
+	    	(is (= (manhattan-distance p5) 0))))
+
+           
 
 			
