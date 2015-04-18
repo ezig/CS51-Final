@@ -1,5 +1,6 @@
 (ns npuzzles.core
 	(:require [npuzzles.puzzle :as puzzle])
+	(:require [npuzzles.astar :as astar])
   	(:gen-class))
 
 (defn -main
