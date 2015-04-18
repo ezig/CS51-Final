@@ -13,8 +13,8 @@
 (defn init-queue 
 	"Given a puzzle, returns a Priority Queue with one element: a
      TreePuzzle with nil parent, depth g = 0, and appropriate h 
-     given by the heuristicfunction."
+     given by the heuristic function."
      [firstPuzzle]
      (let [d (puzzle/manhattan-distance firstPuzzle)]
-        {:puzzle firstPuzzle, :parent nil, :g 0, :h d}))
+        [{:puzzle firstPuzzle, :parent nil, :g 0, :h d}]))
       
