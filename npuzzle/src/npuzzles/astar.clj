@@ -16,5 +16,5 @@
      given by the heuristicfunction."
      [firstPuzzle]
      (let [d (puzzle/manhattan-distance firstPuzzle)]
-        {:puzzle firstPuzzle :parent (nil) :g (0) :h d}))
+        {:puzzle firstPuzzle, :parent nil, :g 0, :h d}))
       
