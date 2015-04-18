@@ -76,13 +76,13 @@
 	 (let [final_puzzle (gen-puzzle rows cols (concat (range 1 (* rows cols)) (list 0)))]
 	 (loop [d 0 
 	 	    lst tiles]
-	 	 (if empty? lst)
+	 	 (if (empty? lst)
 	 	     d
 	 	     (let [hd (first lst) tl (rest lst)]
 	 	     (do (let [column (col-of-tile puzzle hd) row (row-of-tile puzzle hd)]
 	               (recur (+ d (+ (abs (- row (row-of-tile final_puzzle hd))) 
 	           	             (abs (- column (col-of-tile final_puzzle hd)))))
-	                          tl))))
+	                          tl)))))
 	 	 )))
 
 ;PRIVATE FUNCTIONS
