@@ -37,4 +37,27 @@
 	     (let [childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-tree) childPuzzles)]
 	(filter #(not= (:tiles (:puzzle %)) parentTiles) childPuzzleTrees))))))
 
+(defn insert-queue
+	"Given a TreePuzzle and a priority queue of TreePuzzles, inserts the TreePuzzle into the priority
+	queue. Helper function for insert-children"
+	[{score :h :as tree-puzzle} pqueue]
+	(loop [queue pqueue searched []]
+		(if (= queue ()) 
+			(conj searched tree-puzzle) 
+		    (let [first-element (first queue) others (rest queue)]
+			(let [first-score (:h first-element)] 
+	    	(if (< score first-score)
+	        	(into [] (concat (conj searched tree-puzzle) queue))
+	        	(recur others (conj searched first-element))))))))
+
+(defn insert-children 
+	"Given a list of TreePuzzles and a priority queue of TreePuzzles, inserts each TreePuzzles
+	in the list into its appropriate position in the priority queue based on its cost value h (lower
+	cost = higher priority). Returns the updated queue."
+	[tree-puzzles pqueue]
+	(loop [puzzles tree-puzzles newqueue pqueue]
+		(if (= puzzles ())
+			newqueue
+		    (let [initial (first puzzles) others (rest puzzles)]
+			(recur others (insert-queue initial newqueue))))))
       
