@@ -52,10 +52,6 @@
 	 return the best chromosome from the phase"
 	[puzzle pop-size num-gens])
 
-(defn generate-population
-	"Given an initial pop-size, creates list random chromosomes"
-	[pop-size])
-
 (defn generate-chromosome
 	"Given a starting puzzle state, make moves number of random (valid) moves
 	to build a list of genes"
@@ -67,6 +63,13 @@
 			chromosome
 			(let [new-gene (next-gene last-gene)]
 				(recur new-gene (conj chromosome new-gene) (- n 1))))))
+
+(defn generate-population
+	"Given an initial puzzle and a pop-size and chromosome size, creates
+	list of random chromosomes"
+	[puzzle pop-size chrom-size]
+	(for [x (range pop-size)]
+		(generate-chromosome puzzle (- chrom-size 1))))
 
 (defn mutate
 	"Given a chromosome, extend the chromosome create another valid puzzle
