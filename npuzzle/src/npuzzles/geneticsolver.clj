@@ -62,11 +62,15 @@
 			(let [new-gene (next-gene last-gene)]
 				(recur new-gene (conj chromosome new-gene) (- n 1))))))
 
-(defn mutation
+(defn mutate
 	"Given a chromosome, extend the chromosome create another valid puzzle
 	by moving the current puzzle. If this results in a chromosome beyond
 	max-size, the chromosome will be truncated randomly"
-	[chromosome max-size])
+	[chromosome max-size]
+	(let [new-chromosome (conj chromosome (next-gene (last chromosome)))]
+		(if (> (count new-chromosome) max-size)
+			(drop (+ 1 (rand-int max-size)) new-chromosome)
+			new-chromosome)))
 
 (defn crossover
 	"Given two chromosomes, finds the points in the chromosomes where
