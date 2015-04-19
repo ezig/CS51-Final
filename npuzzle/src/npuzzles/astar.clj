@@ -31,10 +31,9 @@
      children and remove them if they are equal to the puzzles parent node (we dont want
      to backtrack). Returns a list containing the filtered list of child TreePuzzles."
 	[{current-state :puzzle, parent :parent, depth :g}]
-	     (let [parentTiles (:tiles parent)]
 	     (let [directions (puzzle/valid-directions current-state)]
 	     (let [childPuzzles (map #(puzzle/slide current-state %) directions)]
 	     (let [childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-state) childPuzzles)]
-	(filter #(not= (:tiles (:puzzle %)) parentTiles) childPuzzleTrees))))))
+	(filter #(not= (:puzzle %) parent) childPuzzleTrees)))))
 
       
