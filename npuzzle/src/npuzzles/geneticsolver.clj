@@ -14,6 +14,30 @@
 
 ; PRIVATE FUNCTIONS
 ; TODO: PRIVATIZE THESE WHEN DONE TESTING
+(defn random-dir
+	"Given a puzzle, returns a random valid direction that is NOT dir
+	Based on the assumption that the puzzle has 2 valid moves in every state"
+ 	[puzzle dir]
+ 	(let [valid (filter #(not (= % dir)) (valid-directions puzzle))]
+ 		(rand-nth valid)))
+
+(defn opposite-dir
+	"Given a direction, returns the opposite"
+	 [dir]
+	 (case dir
+	 	:up :down
+	 	:down :up
+	 	:left :right
+	 	:right :left
+	 	nil))
+
+(defn next-gene
+	"Given a gene, returns a gene that represents a possible next state
+	The new gene will be a valid state within one move of the original gene
+	and will NOT undo the previous move"
+	[{puzzle :puzzle prev-dir :prev-dir}]
+	(let [next-dir (random-dir puzzle (opposite-dir prev-dir))]
+		{:puzzle (slide puzzle next-dir) :prev-dir next-dir}))
 
 (defn run-phase
 	"Given a starting puzzle state, generates a population of pop-size
@@ -35,28 +59,8 @@
 		   n moves]
 		(if (zero? n)
 			chromosome
-			(let [undo-dir (opposite-dir (:prev-dir last-gene))
-				  new-dir (random-dir (:puzzle last-gene) undo-dir)
-				  new-puzzle (slide (:puzzle last-gene) new-dir)
-				  new-gene {:puzzle new-puzzle, :prev-dir new-dir}]
+			(let [new-gene (next-gene last-gene)]
 				(recur new-gene (conj chromosome new-gene) (- n 1))))))
-
-(defn random-dir
-	"Given a puzzle, returns a random valid direction that is NOT dir
-	Based on the assumption that the puzzle has 2 valid moves in every state"
- 	[puzzle dir]
- 	(let [valid (filter #(not (= % dir)) (valid-directions puzzle))]
- 		(rand-nth valid)))
-
-(defn opposite-dir
-	"Given a direction, returns the opposite"
-	 [dir]
-	 (case dir
-	 	:up :down
-	 	:down :up
-	 	:left :right
-	 	:right :left
-	 	nil))
 
 (defn mutation
 	"Given a chromosome, extend the chromosome create another valid puzzle
