@@ -31,6 +31,12 @@
 	 	:right :left
 	 	nil))
 
+(defn fitness
+	"Given a chromosome, determines the fitness
+	(right now, this is just the manhattan-distance of the last gene)"
+	[chromosome]
+	(manhattan-distance (:puzzle (last chromosome))))
+
 (defn next-gene
 	"Given a gene, returns a gene that represents a possible next state
 	The new gene will be a valid state within one move of the original gene
