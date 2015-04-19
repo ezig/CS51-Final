@@ -10,11 +10,29 @@
 ; path back to the starting node can be retraced.
 (defrecord TreePuzzle [puzzle parent g h])
 
+(defn puzzle-to-tree 
+	[puzzle depth parent]
+	(let [distance (+ depth (puzzle/manhattan-distance puzzle))]
+       {:puzzle puzzle, :parent parent, :g depth, :h distance}))
+
 (defn init-queue 
 	"Given a puzzle, returns a Priority Queue with one element: a
      TreePuzzle with nil parent, depth g = 0, and appropriate h 
      given by the heuristic function."
      [firstPuzzle]
-     (let [d (puzzle/manhattan-distance firstPuzzle)]
-        [{:puzzle firstPuzzle, :parent nil, :g 0, :h d}]))
+     (let [treePuzzle (puzzle-to-tree firstPuzzle 0 nil)]
+        [treePuzzle]))
+
+(defn gen-children 
+	"Given a TreePuzzle, generates all possible subsequent puzzle states
+     by mapping slide over the result from a puzzle/valid-directions call. We then map over the
+     children and remove them if they are equal to the puzzles parent node (we dont want
+     to backtrack). Returns a list containing the filtered list of child TreePuzzles."
+	[{current-state :puzzle, parent :parent, depth :g}]
+	     (let [parentTiles (:tiles parent)]
+	     (let [directions (puzzle/valid-directions current-state)]
+	     (let [childPuzzles (map #(puzzle/slide current-state %) directions)]
+	     (let [childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-state) childPuzzles)]
+	(filter #(not= (:tiles (:puzzle %)) parent) childPuzzleTrees))))))
+
       
