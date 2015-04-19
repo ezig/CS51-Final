@@ -10,8 +10,7 @@
 	 generations and phases until either a solution is found,
 	 in which case the chromosome that solves the puzzle is returned,
 	 or Nil if a solution is not found within the specified limits"
-	[puzzle generations phases]
-	(loop))
+	[puzzle generations phases])
 
 ; PRIVATE FUNCTIONS
 ; TODO: PRIVATIZE THESE WHEN DONE TESTING

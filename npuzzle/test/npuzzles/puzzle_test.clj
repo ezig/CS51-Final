@@ -87,6 +87,7 @@
 			(is (= (inversions p3) 20))
 			(is (= (inversions p4) 0))
 			(is (= (inversions p5) 0))))
+
 (deftest solvable?-test
 	(testing "solvable?")
 		(def solvable? #'puzzle/solvable?)
@@ -113,3 +114,16 @@
 	    	(is (= (manhattan-distance p3) 10))
 	    	(is (= (manhattan-distance p4) 22))
 	    	(is (= (manhattan-distance p5) 0))))
+
+(deftest solved?-test
+	(testing "solved?")
+		(let [p1 (gen-puzzle 4 4 [12 1 10 2 7 11 4 14 5 0 9 15 8 13 6 3])
+			  p2 (gen-puzzle 3 3 [7 1 2 5 0 9 8 3 6])
+			  p3 (gen-puzzle 3 5 [6 1 2 4 5 7 3 0 14 9 11 12 8 13 10])
+			  p4 (gen-puzzle 3 3 [1 2 3 4 5 6 7 8 0])
+			  p5 (gen-puzzle 2 3 [1 2 3 4 5 0])]
+			  (is (not (solved? p1)))
+			  (is (not (solved? p2)))
+			  (is (not (solved? p3)))
+			  (is (solved? p4))
+			  (is (solved? p5))))
