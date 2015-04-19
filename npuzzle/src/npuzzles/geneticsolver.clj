@@ -1,6 +1,8 @@
 (ns npuzzles.geneticsolver
 	(:use [npuzzles.puzzle]))
 
+(defrecord Gene [puzzle prev-dir])
+
 ;PUBLIC FUNCTIONS
 
 (defn solve
@@ -26,8 +28,18 @@
 
 (defn generate-chromosome
 	"Given a starting puzzle state, make moves number of random (valid) moves
-	to build a list of puzzle states to form a chromosome."
-	[puzzle moves])
+	to build a list of genes"
+	[puzzle moves]
+	(loop [last-gene {:puzzle puzzle, :prev-dir nil}
+		   chromosome [last-gene]
+		   n moves]
+		(if (zero? n)
+			chromosome
+			(let [undo-dir (opposite-dir (:prev-dir last-gene))
+				  new-dir (random-dir (:puzzle last-gene) undo-dir)
+				  new-puzzle (slide (:puzzle last-gene) new-dir)
+				  new-gene {:puzzle new-puzzle, :prev-dir new-dir}]
+				(recur new-gene (conj chromosome new-gene) (- n 1))))))
 
 (defn random-dir
 	"Given a puzzle, returns a random valid direction that is NOT dir
@@ -43,10 +55,11 @@
 	 	:up :down
 	 	:down :up
 	 	:left :right
-	 	:right :left))
+	 	:right :left
+	 	nil))
 
 (defn mutation
-	"Given a chromosome, extend the chromosome create an- other valid puzzle
+	"Given a chromosome, extend the chromosome create another valid puzzle
 	by moving the current puzzle. If this results in a chromosome beyond
 	max-size, the chromosome will be truncated randomly"
 	[chromosome max-size])
