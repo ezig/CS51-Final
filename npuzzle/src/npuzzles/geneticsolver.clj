@@ -10,7 +10,8 @@
 	 generations and phases until either a solution is found,
 	 in which case the chromosome that solves the puzzle is returned,
 	 or Nil if a solution is not found within the specified limits"
-	[puzzle generations phases])
+	[puzzle generations phases]
+	(loop))
 
 ; PRIVATE FUNCTIONS
 ; TODO: PRIVATIZE THESE WHEN DONE TESTING
@@ -44,13 +45,6 @@
 	[{puzzle :puzzle prev-dir :prev-dir}]
 	(let [next-dir (random-dir puzzle (opposite-dir prev-dir))]
 		{:puzzle (slide puzzle next-dir) :prev-dir next-dir}))
-
-(defn run-phase
-	"Given a starting puzzle state, generates a population of pop-size
-	 chromosomes and then runs num-gens number of generations within the phase.
-	 run-phase will return a solution as soon as it finds one, otherwise
-	 return the best chromosome from the phase"
-	[puzzle pop-size num-gens])
 
 (defn generate-chromosome
 	"Given a starting puzzle state, make moves number of random (valid) moves
@@ -87,3 +81,19 @@
 	 and returns a new chromosome that takes the leading part of the first
 	 and concats it with the trailing part of the second chromosome."
 	[chromosome1 chromosome2])
+
+(defn n-best
+	"Given a population, returns the n most fit chromosomes"
+	[population n]
+	(take n (sort-by fitness population)))
+
+(defn run-phase
+	"Given a starting puzzle state, generates a population of pop-size
+	 chromosomes and then runs num-gens number of generations within the phase.
+	 run-phase will return a solution as soon as it finds one, otherwise
+	 return the best chromosome from the phase"
+	[puzzle pop-size num-gens])
+
+(defn run-generation
+	"Given a population and number of best to return, returns the n best "
+	[population n-best])
