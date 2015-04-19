@@ -31,11 +31,11 @@
      children and remove them if they are equal to the puzzles parent node (we dont want
      to backtrack). Returns a list containing the filtered list of child TreePuzzles."
 	[{current-state :puzzle, parent :parent, depth :g :as current-tree}]
-	     (let [parentTiles (:tiles (:puzzle parent))]
-	     (let [directions (puzzle/valid-directions current-state)]
-	     (let [childPuzzles (map #(puzzle/slide current-state %) directions)]
-	     (let [childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-tree) childPuzzles)]
-	(filter #(not= (:tiles (:puzzle %)) parentTiles) childPuzzleTrees))))))
+	     (let [parentTiles (:tiles (:puzzle parent))
+	           directions (puzzle/valid-directions current-state)
+	           childPuzzles (map #(puzzle/slide current-state %) directions)
+	           childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-tree) childPuzzles)]
+	(filter #(not= (:tiles (:puzzle %)) parentTiles) childPuzzleTrees)))
 
 (defn insert-queue
 	"Given a TreePuzzle and a priority queue of TreePuzzles, inserts the TreePuzzle into the priority
