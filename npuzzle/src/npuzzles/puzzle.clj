@@ -23,7 +23,7 @@
 	  (intended only for testing)"
 	 ([rows] (random-solvable-puzzle rows rows))
      ([rows cols] (random-solvable-puzzle rows cols))
-     ([rows cols tiles] (Puzzle. rows cols tiles)))
+     ([rows cols tiles] {:rows rows, :cols cols, :tiles tiles}))
 
 (defn to-string
 	"Given a puzzle, returns a string representation"
