@@ -12,12 +12,12 @@
 
 
 
-(defn puzzle-to-tree 
+(defn- puzzle-to-tree 
 	[puzzle depth parent]
 	(let [distance (+ depth (puzzle/manhattan-distance puzzle))]
        {:puzzle puzzle, :parent parent, :g depth, :h distance}))
 
-(defn init-queue 
+(defn- init-queue 
 	"Given a puzzle, returns a Priority Queue with one element: a
      TreePuzzle with nil parent, depth g = 0, and appropriate h 
      given by the heuristic function."
@@ -25,7 +25,7 @@
      (let [treePuzzle (puzzle-to-tree firstPuzzle 0 nil)]
         [treePuzzle]))
 
-(defn gen-children 
+(defn- gen-children 
 	"Given a TreePuzzle, generates all possible subsequent puzzle states
      by mapping slide over the result from a puzzle/valid-directions call. We then map over the
      children and remove them if they are equal to the puzzles parent node (we dont want
@@ -37,7 +37,7 @@
 	           childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-tree) childPuzzles)]
 	(filter #(not= (:tiles (:puzzle %)) parentTiles) childPuzzleTrees)))
 
-(defn insert-queue
+(defn- insert-queue
 	"Given a TreePuzzle and a priority queue of TreePuzzles, inserts the TreePuzzle into the priority
 	queue. Helper function for insert-children"
 	[{score :h :as tree-puzzle} pqueue]
@@ -50,7 +50,7 @@
 	        	(into [] (concat (conj searched tree-puzzle) queue))
 	        	(recur others (conj searched first-element))))))))
 
-(defn insert-children 
+(defn- insert-children 
 	"Given a list of TreePuzzles and a priority queue of TreePuzzles, inserts each TreePuzzles
 	in the list into its appropriate position in the priority queue based on its cost value h (lower
 	cost = higher priority). Returns the updated queue."
