@@ -30,10 +30,11 @@
      by mapping slide over the result from a puzzle/valid-directions call. We then map over the
      children and remove them if they are equal to the puzzles parent node (we dont want
      to backtrack). Returns a list containing the filtered list of child TreePuzzles."
-	[{current-state :puzzle, parent :parent, depth :g}]
+	[{current-state :puzzle, parent :parent, depth :g :as current-tree}]
+	     (let [parentTiles (:tiles (:puzzle parent))]
 	     (let [directions (puzzle/valid-directions current-state)]
 	     (let [childPuzzles (map #(puzzle/slide current-state %) directions)]
-	     (let [childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-state) childPuzzles)]
-	(filter #(not= (:puzzle %) parent) childPuzzleTrees)))))
+	     (let [childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-tree) childPuzzles)]
+	(filter #(not= (:tiles (:puzzle %)) parentTiles) childPuzzleTrees))))))
 
       
