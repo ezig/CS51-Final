@@ -1,5 +1,5 @@
 (ns npuzzles.astar
-	(:require [npuzzles.puzzle :as puzzle]))
+	(:use [npuzzles.puzzle]))
 
 ; Representation of a puzzle for A* search. Each TreePuzzle node is 
 ; evaluated using a cost function f = g + h, where g is the depth of
@@ -14,7 +14,7 @@
 ;PRIVATE FUNCTIONS
 (defn- puzzle-to-tree 
 	[puzzle depth parent]
-	(let [distance (+ depth (puzzle/manhattan-distance puzzle))]
+	(let [distance (+ depth (manhattan-distance puzzle))]
        {:puzzle puzzle, :parent parent, :g depth, :h distance}))
 
 (defn- init-queue 
@@ -33,8 +33,8 @@
      containing the filtered list of child TreePuzzles."
 	[{current-state :puzzle, parent :parent, depth :g :as current-tree}]
 	     (let [parentTiles (:tiles (:puzzle parent))
-	           directions (puzzle/valid-directions current-state)
-	           childPuzzles (map #(puzzle/slide current-state %) directions)
+	           directions (valid-directions current-state)
+	           childPuzzles (map #(slide current-state %) directions)
 	           childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-tree) childPuzzles)]
 	(filter #(not= (:tiles (:puzzle %)) parentTiles) childPuzzleTrees)))
 
