@@ -86,6 +86,18 @@
             	(recur (+ d (+ (abs (- row final_row)) (abs (- column final_col))))
             		tl)))))
 
+(defn dir-between
+	"Given two puzzles, determines the direction to slide from puzzle1
+	to get puzzle2. ASSUMES PUZZLES HAVE SAME DIMENSION"
+	[puzzle1 puzzle2]
+	(let [diff (- (find-tile puzzle2 0) (find-tile puzzle1 0))]
+		(cond 
+			(= -1 diff) :right
+			(= 1 diff) :left
+			(= (:cols puzzle1) diff) :up
+			(= (- (:cols puzzle1)) diff) :down
+			:else nil)))
+
 ;PRIVATE FUNCTIONS
 (defn- abs [n] (max n (- n)))
 
