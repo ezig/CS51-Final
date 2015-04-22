@@ -158,6 +158,6 @@
 
 (defn- random-puzzle
 	"Given a number of rows and columns, creates random puzzle
-	MAY NOT BE SOLVABLE. Unsolvable puzzles should never be publically avaible"
+	MAY NOT BE SOLVABLE. Unsolvable puzzles should never be publically available"
 	[r c]
 	{:rows r, :cols c, :tiles (shuffle (range (* r c)))})
