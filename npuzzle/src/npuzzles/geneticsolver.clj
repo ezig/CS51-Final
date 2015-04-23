@@ -1,5 +1,6 @@
 (ns npuzzles.geneticsolver
-	(:use [npuzzles.puzzle]))
+	(:use [npuzzles.puzzle])
+	(:use [clojure.set :only (intersection)]))
 
 (defrecord Gene [puzzle prev-dir])
 
@@ -74,12 +75,23 @@
 			(drop (+ 1 (rand-int max-size)) new-chromosome)
 			new-chromosome)))
 
+(defn rand-intersection
+	"Given two chromosomes, returns a vector of two indices representing the
+	positions of a random puzzle shared in both chromosomes"
+	[chromosome1 chromosome2]
+	(let [puzzles1 (map #(:puzzle %) chromosome1)
+		  puzzles2 (map #(:puzzle %) chromosome2)
+		  inter-puzzle (rand-nth (into [] (intersection (set puzzles1) (set puzzles2))))]
+		[(.indexOf puzzles1 inter-puzzle ) (.indexOf puzzles2 inter-puzzle)]))
+
 (defn crossover
 	"Given two chromosomes, finds the points in the chromosomes where
 	 the puzzle states are the same, picks a random point from this list,
 	 and returns a new chromosome that takes the leading part of the first
 	 and concats it with the trailing part of the second chromosome."
-	[chromosome1 chromosome2])
+	[chromosome1 chromosome2]
+	(let [indices (rand-intersection chromosome1 chromosome2)]
+		(concat (take (indices 0) chromosome1) (drop (indices 1) chromosome2))))
 
 (defn n-best
 	"Given a population, returns the n most fit chromosomes"
