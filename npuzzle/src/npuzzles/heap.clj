@@ -44,10 +44,14 @@
 
 (defn dequeue
 	"Returns the first item (lowest cost, highest priority TreePuzzle) off the queue."
-	[pqueue])
+ [pqueue] 
+   (if (= pqueue []) 
+   (throw (Throwable. "Invalid Priority Queue"))
+   [(first pqueue) (pop pqueue)])
+)
 
 ; Private Functions
-(defn- puzzle-to-tree 
+(defn puzzle-to-tree 
 	[puzzle depth parent]
 	(let [distance (+ depth (p/manhattan-distance puzzle))]
        {:puzzle puzzle, :parent parent, :g depth, :h distance}))
