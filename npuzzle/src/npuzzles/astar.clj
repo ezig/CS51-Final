@@ -22,7 +22,11 @@
 	 queue based on its cost value h (lower cost = higher priority).
 	 Returns the updated queue."
 	[tree-puzzles pqueue]
-	(reduce (fn [x y] (insert-queue x y)) tree-puzzles pqueue))
+	(loop [puzzles tree-puzzles newqueue pqueue]
+		(if (= puzzles ())
+			newqueue
+		    (let [initial (first puzzles) others (rest puzzles)]
+			(recur others (insert-queue initial newqueue))))))
 ; TODO 
 
 (defn step 
