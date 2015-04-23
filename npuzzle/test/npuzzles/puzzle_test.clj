@@ -109,7 +109,7 @@
 			  p3 (gen-puzzle 3 5 [6 1 2 4 5 7 3 0 14 9 11 12 8 13 10])
 			  p4 (gen-puzzle 3 3 [1 2 3 4 5 6 7 8 0])
 			  p5 (gen-puzzle 2 3 [1 2 3 4 5 0])]
-			  (is (not (solvable? p1)))
+			  (is (solvable? p1))
 			  (is (not (solvable? p2)))
 			  (is (solvable? p3))
 			  (is (solvable? p4))
