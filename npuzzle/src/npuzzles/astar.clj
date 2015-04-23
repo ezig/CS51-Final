@@ -1,30 +1,11 @@
 (ns npuzzles.astar
-	(:use [npuzzles.puzzle]))
+	(:use [npuzzles.puzzle])
+  (:use [npuzzles.heap]))
 
-; Representation of a puzzle for A* search. Each TreePuzzle node is 
-; evaluated using a cost function f = g + h, where g is the depth of
-; the node (cost of reaching the node) and h is the expected cost of
-; reaching the goal state from the current state as determined by 
-; some heuristic function. Each puzzle is also aware of its Parent 
-; (another TreePuzzle) so that when the goal state is reached, the
-; path back to the starting node can be retraced.
 (defrecord TreePuzzle [puzzle parent g h])
 
 
 ;PRIVATE FUNCTIONS
-(defn- puzzle-to-tree 
-	[puzzle depth parent]
-	(let [distance (+ depth (manhattan-distance puzzle))]
-       {:puzzle puzzle, :parent parent, :g depth, :h distance}))
-
-(defn- init-queue 
-	"Given a puzzle, returns a Priority Queue with one element: a
-     TreePuzzle with nil parent, depth g = 0, and appropriate h 
-     given by the heuristic function."
-     [firstPuzzle]
-     (let [treePuzzle (puzzle-to-tree firstPuzzle 0 nil)]
-        [treePuzzle]))
-
 (defn- gen-children 
 	"Given a TreePuzzle, generates all possible subsequent puzzle states
      by mapping slide over the result from a puzzle/valid-directions call.
@@ -38,19 +19,6 @@
 	           childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-tree) childPuzzles)]
 	(filter #(not= (:tiles (:puzzle %)) parentTiles) childPuzzleTrees)))
 
-(defn- insert-queue
-	"Given a TreePuzzle and a priority queue of TreePuzzles, inserts the
-	TreePuzzle into the priority queue. Helper function for insert-children"
-	[{score :h :as tree-puzzle} pqueue]
-	(loop [queue pqueue searched []]
-		(if (= queue ()) 
-			(conj searched tree-puzzle) 
-		    (let [first-element (first queue) others (rest queue)
-			      first-score (:h first-element)] 
-	    		(if (< score first-score)
-	        		(into [] (concat (conj searched tree-puzzle) queue))
-	        		(recur others (conj searched first-element)))))))
-
 (defn- insert-children 
 	"Given a list of TreePuzzles and a priority queue of TreePuzzles, inserts
 	 each TreePuzzles in the list into its appropriate position in the priority
@@ -63,9 +31,6 @@
 		    (let [initial (first puzzles) others (rest puzzles)]
 			(recur others (insert-queue initial newqueue))))))
 ; TODO 
-(defn- dequeue
-	"Returns the first item (lowest cost, highest priority TreePuzzle) off the queue."
-	[pqueue])
 
 (defn- step 
 	"Dequeues a puzzle off the priority queue, checks if it is equal to the
