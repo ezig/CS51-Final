@@ -141,8 +141,8 @@
 			inv
 			(let [hd (first lst) tl (rest lst)]
 				(recur (+ inv (count (filter #(< % hd) tl))) tl)))))
-
-(defn- solvable?
+; MADE THIS PUBLIC FOR TESTING PURPOSES
+(defn solvable?
 	"Returns true if a given puzzle is solvable, false otherwise"
 	[{rows :rows cols :cols :as puzzle}]
 	(let [is_odd (odd? (* rows cols))]

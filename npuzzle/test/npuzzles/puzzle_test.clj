@@ -122,21 +122,8 @@
 			  p3 (gen-puzzle 3 5 [6 1 2 4 5 7 3 0 14 9 11 12 8 13 10])
 			  p4 (gen-puzzle 3 3 [1 2 3 4 5 6 7 8 0])
 			  p5 (gen-puzzle 2 3 [1 2 3 4 5 0])]
-			(is (not (solved? p1)))
-			(is (not (solved? p2)))
-			(is (not (solved? p3)))
-			(is (solved? p4))
-			(is (solved? p5))))
-
-(deftest slide-test
-	(testing "slide")
-		(let [p1 (gen-puzzle 3 3 [7 1 2 5 0 9 8 3 6])
-	  		  p2 (gen-puzzle 3 2 [1 2 3 4 5 0])]
-	  		(is (= (:tiles (slide p1 :up)) [7 1 2 5 3 9 8 0 6]))
-	  		(is (= (:tiles (slide p1 :down)) [7 0 2 5 1 9 8 3 6]))
-	  		(is (= (:tiles (slide p1 :left)) [7 1 2 5 9 0 8 3 6]))
-	  		(is (= (:tiles (slide p1 :right)) [7 1 2 0 5 9 8 3 6]))
-	  		(is (= (:tiles (slide p2 :right)) [1 2 3 4 0 5]))
-	  		(is (= (:tiles (slide p2 :left)) (:tiles p2)))
-			(is (= (:tiles (slide p2 :up)) (:tiles p2)))
-			(is (= (:tiles (slide p2 :down)) [1 2 3 0 5 4]))))
+			  (is (not (solved? p1)))
+			  (is (not (solved? p2)))
+			  (is (not (solved? p3)))
+			  (is (solved? p4))
+			  (is (solved? p5))))

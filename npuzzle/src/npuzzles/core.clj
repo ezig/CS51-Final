@@ -9,7 +9,7 @@
 	 "I don't do a whole lot ... yet."
  	[& args]
  	(println "Hello, World!")
-  (let [x (puzzle/gen-puzzle 2)]
+  (let [x (puzzle/gen-puzzle 3)]
     (println (str "\n" (puzzle/to-string x)))
     (map (fn [x] (print-str (puzzle/to-string x))) (astar/solve x))
   ))

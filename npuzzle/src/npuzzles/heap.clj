@@ -32,16 +32,20 @@
 (defn insert-queue
 	"Given a TreePuzzle and a priority queue of TreePuzzles, inserts the
 	TreePuzzle into the priority queue. Helper function for insert-children"
-	[{score :h :as tree-puzzle} pqueue]
+	[{score :h puz :puzzle :as tree-puzzle} pqueue]
 	(loop [queue pqueue searched []]
 		(if (or (= queue ()) (nil? queue))
 			(conj searched tree-puzzle) 
 		    (let [first-element (queue 0)
-		          others (into [] (rest queue))]
-			(let [first-score (:h first-element)] 
-	    		(if (<= score first-score)
+		          others (into [] (rest queue))
+		          elem-tiles (:tiles puz)]
+			(let [first-score (:h first-element)
+				  first-tiles (:tiles(:puzzle first-element))] 
+	    		(if (<= score first-score) 
 	        		(into [] (concat (conj searched tree-puzzle) queue))
-	        		(recur others (conj searched first-element))))))))
+	        		(if (= elem-tiles first-tiles)
+	        			(conj searched queue) 
+	        			(recur others (conj searched first-element)))))))))
 
 (defn dequeue
 	"Returns the first item (lowest cost, highest priority TreePuzzle) off the queue."
