@@ -7,7 +7,7 @@
   providing O(1) insertion and O(logn) deletion. 
 )
   
-(comment)
+(comment
   Representation of a puzzle for A* search. Each TreePuzzle node is 
   evaluated using a cost function f = g + h, where g is the depth of
   the node (cost of reaching the node) and h is the expected cost of 

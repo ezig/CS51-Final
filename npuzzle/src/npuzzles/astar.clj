@@ -2,9 +2,6 @@
 	(:use [npuzzles.puzzle])
   (:use [npuzzles.heap]))
 
-(defrecord TreePuzzle [puzzle parent g h])
-
-
 ;PRIVATE FUNCTIONS
 (defn- gen-children 
 	"Given a TreePuzzle, generates all possible subsequent puzzle states

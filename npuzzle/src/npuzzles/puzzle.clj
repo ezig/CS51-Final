@@ -98,15 +98,16 @@
 			(= (- (:cols puzzle1)) diff) :down
 			:else nil)))
 
-(defn gen-children
-	"Given a puzzle and an optional direction, returns a list of all states
-	within one valid move of the puzzle except those in dir direction.
-	If no direction is provided, will return list of all
-	valid states within one move."
-	([puzzle] (gen-children puzzle nil))
-	([puzzle dir]
-		(let [dirs (filter #(not (= % dir)) (valid-directions puzzle))]
-			(map #(slide puzzle %) dirs))))
+; Not sure if we're gonna use this
+; (defn gen-children
+; 	"Given a puzzle and an optional direction, returns a list of all states
+; 	within one valid move of the puzzle except those in dir direction.
+; 	If no direction is provided, will return list of all
+; 	valid states within one move."
+; 	([puzzle] (gen-children puzzle nil))
+; 	([puzzle dir]
+; 		(let [dirs (filter #(not (= % dir)) (valid-directions puzzle))]
+; 			(map #(slide puzzle %) dirs))))
 
 ;PRIVATE FUNCTIONS
 (defn- abs [n] (max n (- n)))
