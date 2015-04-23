@@ -36,7 +36,7 @@
 	(loop [queue pqueue searched []]
 		(if (= queue ()) 
 			(conj searched tree-puzzle) 
-		    (let [first-element (first queue) others (rest queue)
+		    (let [first-element (get queue 0) others [(rest queue)]
 			      first-score (:h first-element)] 
 	    		(if (< score first-score)
 	        		(into [] (concat (conj searched tree-puzzle) queue))
