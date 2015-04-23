@@ -42,7 +42,7 @@
           newq (get result 1)]
     (if (solved? (:puzzle tpuzzle))
       tpuzzle 
-      (do (println "blah") (step (insert-children (gen-children tpuzzle) newq)))
+      (do (println "blah") (recur (insert-children (gen-children tpuzzle) newq)))
     ))
 ))
 
