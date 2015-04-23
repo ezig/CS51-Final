@@ -1,9 +1,9 @@
 (ns npuzzles.heap
-	(:require [npuzzles.puzzle :as p]))
+	(:use [npuzzles.puzzle]))
  
 (comment 
   What we prioritize in our priority queue is insertion, deletion, and 
-  extracting the first element. A binary minheap is a very good choice for this,
+  extracting the first ezlement. A binary minheap is a very good choice for this,
   providing O(1) insertion and O(logn) deletion. 
 )
   
@@ -34,13 +34,14 @@
 	TreePuzzle into the priority queue. Helper function for insert-children"
 	[{score :h :as tree-puzzle} pqueue]
 	(loop [queue pqueue searched []]
-		(if (= queue ()) 
+		(if (or (= queue ()) (nil? queue))
 			(conj searched tree-puzzle) 
-		    (let [first-element (get queue 0) others [(rest queue)]
-			      first-score (:h first-element)] 
-	    		(if (< score first-score)
+		    (let [first-element (queue 0)
+		          others (into [] (rest queue))]
+			(let [first-score (:h first-element)] 
+	    		(if (<= score first-score)
 	        		(into [] (concat (conj searched tree-puzzle) queue))
-	        		(recur others (conj searched first-element)))))))
+	        		(recur others (conj searched first-element))))))))
 
 (defn dequeue
 	"Returns the first item (lowest cost, highest priority TreePuzzle) off the queue."
@@ -52,6 +53,6 @@
 
 ; Private Functions
 (defn puzzle-to-tree 
-	[puzzle depth parent]
-	(let [distance (+ depth (p/manhattan-distance puzzle))]
-       {:puzzle puzzle, :parent parent, :g depth, :h distance}))
+	[puz depth parent]
+	(let [distance (+ depth (manhattan-distance puz))]
+       {:puzzle puz, :parent parent, :g depth, :h distance}))

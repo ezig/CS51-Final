@@ -1,6 +1,6 @@
 (ns npuzzles.astar
 	(:use [npuzzles.puzzle])
-  (:use [npuzzles.heap]))
+    (:use [npuzzles.heap]))
 
 ;PRIVATE FUNCTIONS
 (defn gen-children 
