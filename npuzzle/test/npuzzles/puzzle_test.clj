@@ -88,9 +88,22 @@
 			(is (= (inversions p4) 0))
 			(is (= (inversions p5) 0))))
 
+(deftest slide-test
+	(testing "slide")
+		(let [p1 (gen-puzzle 3 3 [7 1 2 5 0 9 8 3 6])
+	  		  p2 (gen-puzzle 3 2 [1 2 3 4 5 0])]
+	  		(is (= (:tiles (slide p1 :up)) [7 1 2 5 3 9 8 0 6]))
+	  		(is (= (:tiles (slide p1 :down)) [7 0 2 5 1 9 8 3 6]))
+	  		(is (= (:tiles (slide p1 :left)) [7 1 2 5 9 0 8 3 6]))
+	  		(is (= (:tiles (slide p1 :right)) [7 1 2 0 5 9 8 3 6]))
+	  		(is (= (:tiles (slide p2 :right)) [1 2 3 4 0 5]))
+	  		(is (= (:tiles (slide p2 :left)) (:tiles p2)))
+			(is (= (:tiles (slide p2 :up)) (:tiles p2)))
+			(is (= (:tiles (slide p2 :down)) [1 2 3 0 5 4]))))
+
 (deftest solvable?-test
 	(testing "solvable?")
-		(def solvable? #'puzzle/solvable?)
+		;(def solvable? #'puzzle/solvable?)
 		(let [p1 (gen-puzzle 4 4 [12 1 10 2 7 11 4 14 5 0 9 15 8 13 6 3])
 			  p2 (gen-puzzle 3 3 [7 1 2 5 0 9 8 3 6])
 			  p3 (gen-puzzle 3 5 [6 1 2 4 5 7 3 0 14 9 11 12 8 13 10])
