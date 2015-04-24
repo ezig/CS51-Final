@@ -62,8 +62,8 @@
 	"Given an initial puzzle and a pop-size and chromosome size, creates
 	list of random chromosomes"
 	[puzzle pop-size chrom-size]
-	(for [x (range pop-size)]
-		(generate-chromosome puzzle (- chrom-size 1))))
+	(into [] (for [x (range pop-size)]
+		(generate-chromosome puzzle (- chrom-size 1)))))
 
 (defn mutate
 	"Given a chromosome, extend the chromosome create another valid puzzle
@@ -72,7 +72,7 @@
 	[chromosome max-size]
 	(let [new-chromosome (conj chromosome (next-gene (last chromosome)))]
 		(if (> (count new-chromosome) max-size)
-			(drop (+ 1 (rand-int max-size)) new-chromosome)
+			(vec (take (+ 1 (rand-int max-size)) new-chromosome))
 			new-chromosome)))
 
 (defn rand-intersection
@@ -91,7 +91,7 @@
 	 and concats it with the trailing part of the second chromosome."
 	[chromosome1 chromosome2]
 	(let [indices (rand-intersection chromosome1 chromosome2)]
-		(concat (take (indices 0) chromosome1) (drop (indices 1) chromosome2))))
+		(into [] (concat (take (indices 0) chromosome1) (drop (indices 1) chromosome2)))))
 
 (defn n-best
 	"Given a population, returns the n most fit chromosomes"
@@ -103,8 +103,26 @@
 	 chromosomes and then runs num-gens number of generations within the phase.
 	 run-phase will return a solution as soon as it finds one, otherwise
 	 return the best chromosome from the phase"
-	[puzzle pop-size num-gens])
+	[puzzle pop-size num-gens]
+	(let [population (generate-population puzzle pop-size (:rows puzzle))]
+		(loop [n num-gens
+			   p population]
+			(if (= n 0)
+				(first p)
+				(let [new-pop (run-generation p 5 5 40 40)
+					  best (first new-pop)]
+					(if (solved? (:puzzle (last best)))
+						(first new-pop)
+						(recur (- n 1) new-pop)))))))
 
 (defn run-generation
-	"Given a population and number of best to return, returns the n best "
-	[population n-best])
+	"Given a population, the number of best to pick from the generation,
+	the number of crossover chromosomes to generation, the mutation probability
+	(int out of 100), the max size of the individual chromosomes returns a
+	new population sorted by fitness"
+	[population num-best num-cross mut-prob max-size]
+	(let [best (n-best population num-best)
+		  crossovers (repeatedly num-cross #(crossover (rand-nth best) (rand-nth best)))
+		  new-pop (concat best crossovers)
+		  mut-pop (map #(if (< (rand-int 100) mut-prob) (mutate % max-size) %) new-pop)]
+		  (vec (sort-by fitness mut-pop))))
