@@ -103,7 +103,17 @@
 	 chromosomes and then runs num-gens number of generations within the phase.
 	 run-phase will return a solution as soon as it finds one, otherwise
 	 return the best chromosome from the phase"
-	[puzzle pop-size num-gens])
+	[puzzle pop-size num-gens]
+	(let [population (generate-population puzzle pop-size (:rows puzzle))]
+		(loop [n num-gens
+			   p population]
+			(if (= n 0)
+				(first p)
+				(let [new-pop (run-generation p 5 5 40 20)
+					  best (first new-pop)]
+					(if (solved? (:puzzle (last best)))
+						(first new-pop)
+						(recur (- n 1) new-pop)))))))
 
 (defn run-generation
 	"Given a population, the number of best to pick from the generation,
