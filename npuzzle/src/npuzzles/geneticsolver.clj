@@ -6,12 +6,22 @@
 
 ;PUBLIC FUNCTIONS
 
-(defn solve
-	"Given a puzzle, runs the genetic algorithm with specified number of
-	 generations and phases until either a solution is found,
-	 in which case the chromosome that solves the puzzle is returned,
-	 or Nil if a solution is not found within the specified limits"
-	[puzzle generations phases])
+; (declare run-phase)
+; (defn solve
+; 	"Given a puzzle, runs the genetic algorithm with specified number of
+; 	 generations and phases until either a solution is found,
+; 	 in which case the chromosome that solves the puzzle is returned,
+; 	 or Nil if a solution is not found within the specified limits"
+; 	[puzzle generations phases]
+; 	(loop [n num-gens
+; 		   p population]
+; 			(if (= n 0)
+; 				nil
+; 				(let [best-chrom (run-phase puzzle (:rows puzzle) generations)
+; 					  best (first new-pop)]
+; 					(if (solved? (:puzzle (last best)))
+; 						(first new-pop)
+; 						(recur (- n 1) new-pop)))))))
 
 ; PRIVATE FUNCTIONS
 ; TODO: PRIVATIZE THESE WHEN DONE TESTING
@@ -98,23 +108,6 @@
 	[population n]
 	(take n (sort-by fitness population)))
 
-(defn run-phase
-	"Given a starting puzzle state, generates a population of pop-size
-	 chromosomes and then runs num-gens number of generations within the phase.
-	 run-phase will return a solution as soon as it finds one, otherwise
-	 return the best chromosome from the phase"
-	[puzzle pop-size num-gens]
-	(let [population (generate-population puzzle pop-size (:rows puzzle))]
-		(loop [n num-gens
-			   p population]
-			(if (= n 0)
-				(first p)
-				(let [new-pop (run-generation p 5 5 40 40)
-					  best (first new-pop)]
-					(if (solved? (:puzzle (last best)))
-						(first new-pop)
-						(recur (- n 1) new-pop)))))))
-
 (defn run-generation
 	"Given a population, the number of best to pick from the generation,
 	the number of crossover chromosomes to generation, the mutation probability
@@ -126,3 +119,24 @@
 		  new-pop (concat best crossovers)
 		  mut-pop (map #(if (< (rand-int 100) mut-prob) (mutate % max-size) %) new-pop)]
 		  (vec (sort-by fitness mut-pop))))
+
+(defn run-phase
+	"Given a starting puzzle state, generates a population of pop-size
+	 chromosomes and then runs num-gens number of generations within the phase.
+	 run-phase will return a solution as soon as it finds one, otherwise
+	 return the best chromosome from the phase"
+	[puzzle pop-size num-gens]
+	(let [population (generate-population puzzle pop-size (:rows puzzle))
+		  num-best (* 2 (:rows puzzle))
+		  num-cross num-best
+		  mut-prob 60
+		  max-size (* 20 (:rows puzzle))]
+		(loop [n num-gens
+			   p population]
+			(if (= n 0)
+				(first p)
+				(let [new-pop (run-generation p num-best num-cross mut-prob max-size)
+					  best (first new-pop)]
+					(if (solved? (:puzzle (last best)))
+						(first new-pop)
+						(recur (- n 1) new-pop)))))))
