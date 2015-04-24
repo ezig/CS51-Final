@@ -62,8 +62,8 @@
 	"Given an initial puzzle and a pop-size and chromosome size, creates
 	list of random chromosomes"
 	[puzzle pop-size chrom-size]
-	(for [x (range pop-size)]
-		(generate-chromosome puzzle (- chrom-size 1))))
+	(into [] (for [x (range pop-size)]
+		(generate-chromosome puzzle (- chrom-size 1)))))
 
 (defn mutate
 	"Given a chromosome, extend the chromosome create another valid puzzle
@@ -106,5 +106,13 @@
 	[puzzle pop-size num-gens])
 
 (defn run-generation
-	"Given a population and number of best to return, returns the n best "
-	[population n-best])
+	"Given a population, the number of best to pick from the generation,
+	the number of crossover chromosomes to generation, the mutation probability
+	(int out of 100), the max size of the individual chromosomes returns a
+	new population sorted by fitness"
+	[population num-best num-cross mut-prob max-size]
+	(let [best (n-best population num-best)
+		  crossovers (repeatedly num-cross #(crossover (rand-nth best) (rand-nth best)))
+		  new-pop (concat best crossovers)
+		  mut-pop (map #(if (< (rand-int 100) mut-prob) (mutate % max-size) %) new-pop)]
+		  (vec (sort-by fitness mut-pop))))
