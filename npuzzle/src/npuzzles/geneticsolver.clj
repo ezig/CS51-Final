@@ -72,7 +72,7 @@
 	[chromosome max-size]
 	(let [new-chromosome (conj chromosome (next-gene (last chromosome)))]
 		(if (> (count new-chromosome) max-size)
-			(drop (+ 1 (rand-int max-size)) new-chromosome)
+			(vec (take (+ 1 (rand-int max-size)) new-chromosome))
 			new-chromosome)))
 
 (defn rand-intersection
@@ -91,7 +91,7 @@
 	 and concats it with the trailing part of the second chromosome."
 	[chromosome1 chromosome2]
 	(let [indices (rand-intersection chromosome1 chromosome2)]
-		(concat (take (indices 0) chromosome1) (drop (indices 1) chromosome2))))
+		(into [] (concat (take (indices 0) chromosome1) (drop (indices 1) chromosome2)))))
 
 (defn n-best
 	"Given a population, returns the n most fit chromosomes"
@@ -109,7 +109,7 @@
 			   p population]
 			(if (= n 0)
 				(first p)
-				(let [new-pop (run-generation p 5 5 40 20)
+				(let [new-pop (run-generation p 5 5 40 40)
 					  best (first new-pop)]
 					(if (solved? (:puzzle (last best)))
 						(first new-pop)
