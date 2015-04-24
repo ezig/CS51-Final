@@ -22,7 +22,7 @@
     [puz closed]
     (let [tiles (:tiles (:puzzle puz)) score (:h puz)]
     (loop [puzzles closed searched []]
-    	(if (= puzzles ())
+    	(if (= puzzles [])
     		closed
     		(let [initial (puzzles 0) 
     		  	  others (vec (rest puzzles))
@@ -48,9 +48,9 @@
 			[newqueue closed]
 		    (let [initial (puzzles 0) 
 		    	  others (vec (rest puzzles))
-		    	  closed-len (count closed)
-		    	  new-closed (member initial closed)
-		    	  dont-insert (> (count new-closed) closed-len)]
+		    	  closed-len (count closed)]
+		    	  new-closed (member initial closed))
+		    	dont-insert (> (count new-closed) closed-len)]
 		    (if dont-insert
 		    	(recur others newqueue new-closed)
 		    	(recur others (insert-queue initial newqueue) new-closed))))))
