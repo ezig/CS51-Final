@@ -15,23 +15,24 @@
 	           childPuzzles (map #(slide current-state %) directions)
 	           childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-tree) childPuzzles)]
 	(vec (filter #(not= (:tiles (:puzzle %)) parentTiles) childPuzzleTrees))))
+
 (defn member 
 	"Given a tree-puzzle and a vector of tree-puzzles, returns true if there is a puzzle 
 	there is a TreePuzzle whose puzzle has the same tile formation as the tiles of the puzzle of
 	the TreePuzzle that was passed in"
-    [puz closed]
-    (let [tiles (:tiles (:puzzle puz)) score (:h puz)]
-    (loop [puzzles closed searched []]
-    	(if (= puzzles ())
-    		closed
+    [tpuzzle plist]
+    (let [puzzle (:puzzle tpuzzle) score (:h tpuzzle)]
+    (loop [puzzles plist searched []]
+    	(if (= puzzles [])
+    		[plist true]
     		(let [initial (puzzles 0) 
     		  	  others (vec (rest puzzles))
-    		  	  tiles2 (:tiles (:puzzle initial))
-    		 	  score2 (:h initial)]
-    		(if (= tiles tiles2)
+    		  	  puzzle2 (:puzzle initial)
+    		 	    score2 (:h initial)]
+    		(if (= puzzle puzzle2)
     			 (if (< score score2)
-    			 	 (conj searched others)
-    			 	 (conj closed "dummy"))
+    			 	 [(vec (concat searched others))  true]
+    			 	 [plist false])
     			 (recur others (conj searched initial))
 
     		
@@ -43,17 +44,18 @@
 	 queue based on its cost value h (lower cost = higher priority).
 	 Returns the updated queue."
 	[tree-puzzles open closed]
-	(loop [puzzles tree-puzzles newqueue open closed closed]
-		(if (= puzzles ())
-			[newqueue closed]
-		    (let [initial (puzzles 0) 
-		    	  others (vec (rest puzzles))
-		    	  closed-len (count closed)
-		    	  new-closed (member initial closed)
-		    	  dont-insert (> (count new-closed) closed-len)]
-		    (if dont-insert
-		    	(recur others newqueue new-closed)
-		    	(recur others (insert-queue initial newqueue) new-closed))))))
+	(loop [puzzles tree-puzzles newqueue open visited closed]
+		(if (= puzzles [])
+			[newqueue visited]
+		(let [puzzle (puzzles 0) newpuzzles (vec (rest puzzles)) 
+         [new-open update-open] (member puzzle newqueue)
+         [new-closed update-open2] (member puzzle visited)]
+      (if (or update-open update-open2)
+        (recur newpuzzles (insert-queue puzzle new-open) new-closed)
+        (recur newpuzzles new-open new-closed)
+      )))))
+               
+       
 ; TODO 
 
 (defn step 
@@ -65,17 +67,13 @@
     (loop [open pqueue closed []]
     	(if (= pqueue []) 
        		(throw (Throwable. "Invalid Priority Queue"))
-        	(let [result (dequeue pqueue) 
-            	  tpuzzle (result 0)
-              	  newq (result 1)
-              	  closed (conj closed tpuzzle)]
+        	(let [result (dequeue open) 
+            	  tpuzzle (result 0)]
     	(if (solved? (:puzzle tpuzzle))
         	tpuzzle 
-        	(let [result-insert (insert-children (gen-children tpuzzle) open closed)
-        		  new-open (result-insert 0)
-        		  new-closed (result-insert 1)] 
-       		(do (println str "\n" (to-string (:puzzle tpuzzle))) (recur new-open new-closed))))))))
-       
+        	(let [[new-open new-closed] (insert-children (gen-children tpuzzle) (result 1) 
+               (conj closed (:puzzle tpuzzle)))]
+       		(do (recur new-open new-closed))))))))
 
 (defn- map-solution
 	"Given the return value of solve (a TreePuzzle node thatcorresponds to the goal state), 
@@ -83,13 +81,16 @@
 	by retracing the path back to the starting node (through the Parent nodes of each
     TreePuzzle until you reach the node with the nil parent)."
 	[tpuzzle]
-  (rseq (reduce (fn [x y] (if (= (:parent x) nil) y (conj y (:puzzle x)))) tpuzzle [])))
+  (loop [puz tpuzzle plist ()]
+      (if (nil? puz)
+          plist
+          (recur (:parent puz) (cons (:puzzle puz) plist)))))
 
 ; PUBLIC FUNCTIONS
 (defn solve
 	"Given a initial puzzle state, returns the sequence of puzzles needed to go from that 
 	puzzle state to the goal state."
 	[puzzle] 
-   (if (solvable? puzzle)
-   (map-solution (step (init-queue puzzle)))
-   (println "Not Solvable")))
+   ;(if (solvable? puzzle)
+   (map-solution (step (init-queue puzzle))))
+   ;(println "Not Solvable")))
