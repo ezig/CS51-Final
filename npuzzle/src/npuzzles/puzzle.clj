@@ -1,4 +1,6 @@
-(ns npuzzles.puzzle)
+(ns npuzzles.puzzle
+	(:require [taoensso.timbre.profiling :as profiling
+           :refer (pspy pspy* profile defnp p p*)]))
 
 ; Puzzle record has integer number of rows, columsns
 ; and an row * column length vector of tiles [0, row * column)
@@ -50,7 +52,7 @@
 
 (declare swap)
 (declare find-tile)
-(defn slide
+(defnp slide
 	"Given a direction, moves puzzle in that direction if it is a valid move"
 	[{cols :cols rows :rows tiles :tiles :as puzzle} direction]
 	(if (not (nil? (some #{direction} (valid-directions puzzle))))
@@ -69,7 +71,7 @@
 	(= tiles (concat (range 1 (* rows cols)) (list 0))))
 
 (declare abs)
-(defn manhattan-distance
+(defnp manhattan-distance
 	"Given a Puzzle, calculates its fitness using the Manhattan Distance 
 	 heuristic function"
 	[{cols :cols rows :rows tiles :tiles :as puzzle}]
@@ -151,11 +153,11 @@
 	  		(and 
 	  			(even? cols)
 	  			(even? rows)
-	  			(odd? (+ (row-of-tile puzzle 0) (inversions puzzle))))
+	  			(even? (+ (row-of-tile puzzle 0) (inversions puzzle))))
 	  		(and 
 	  			(even? cols)
 	  			(odd? rows)
-	  			(even? (+ (row-of-tile puzzle 0) (inversions puzzle)))))))
+	  			(odd? (+ (row-of-tile puzzle 0) (inversions puzzle)))))))
 
 (defn- random-puzzle
 	"Given a number of rows and columns, creates random puzzle
