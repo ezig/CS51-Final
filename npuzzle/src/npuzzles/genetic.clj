@@ -27,13 +27,6 @@
 
 ; PRIVATE FUNCTIONS
 ; TODO: PRIVATIZE THESE WHEN DONE TESTING
-(defn random-dir
-	"Given a puzzle, returns a random valid direction that is NOT dir
-	Based on the assumption that the puzzle has 2 valid moves in every state"
- 	[puzzle dir]
- 	(let [valid (filter #(not (= % dir)) (valid-directions puzzle))]
- 		(rand-nth valid)))
-
 (defn opposite-dir
 	"Given a direction, returns the opposite"
 	 [dir]
@@ -43,20 +36,6 @@
 	 	:left :right
 	 	:right :left
 	 	nil))
-
-(defn fitness
-	"Given a chromosome, determines the fitness
-	(right now, this is just the manhattan-distance of the last gene)"
-	[chromosome]
-	(manhattan-distance (:puzzle (last chromosome))))
-
-(defn next-gene
-	"Given a gene, returns a gene that represents a possible next state
-	The new gene will be a valid state within one move of the original gene
-	and will NOT undo the previous move"
-	[{puzzle :puzzle prev-dir :prev-dir}]
-	(let [next-dir (random-dir puzzle (opposite-dir prev-dir))]
-		{:puzzle (slide puzzle next-dir) :prev-dir next-dir}))
 
 (defn gen-chromosome
 	"Given a starting puzzle state, make moves number of random (valid) moves
@@ -69,7 +48,7 @@
 	list of random chromosomes"
 	[pop-size chrom-size]
 	(into [] (for [x (range pop-size)]
-		(generate-chromosome chrom-size))))
+		(gen-chromosome chrom-size))))
 
 (defn mutate
 	"Given a chromosome, extend the chromosome create another valid puzzle
@@ -84,23 +63,21 @@
 	[chromosome puzzle]
 	(loop [chrom chromosome
 		   puz puzzle
+		   prev-dir nil
 		   dir-list []]
 		(if (empty? chrom)
 			[puz, dir-list]
-			(let [valid-dirs (valid-directions puz)
+			(let [undo-dir (opposite-dir prev-dir)
+				  valid-dirs (into [] (filter #(not (= % undo-dir)) (valid-directions puz)))
 				  next-dir (valid-dirs (int (* (chrom 0) (count valid-dirs))))
 				  new-chrom (into [] (drop 1 chrom))]
-				  ; next-dir :right]
-				(recur new-chrom (slide puz next-dir) (conj dir-list next-dir))))))
+				(recur new-chrom (slide puz next-dir) next-dir (conj dir-list next-dir))))))
 
-(defn rand-intersection
-	"Given two chromosomes, returns a vector of two indices representing the
-	positions of a random puzzle shared in both chromosomes"
-	[chromosome1 chromosome2]
-	(let [puzzles1 (map #(:puzzle %) chromosome1)
-		  puzzles2 (map #(:puzzle %) chromosome2)
-		  inter-puzzle (rand-nth (into [] (intersection (set puzzles1) (set puzzles2))))]
-		[(.indexOf puzzles1 inter-puzzle ) (.indexOf puzzles2 inter-puzzle)]))
+(defn fitness
+	"Given a chromosome, determines the fitness
+	(right now, this is just the manhattan-distance of the last gene)"
+	[chromosome puzzle]
+	(manhattan-distance ((interpret-chromsome chromosome puzzle) 0)))
 
 (defn crossover
 	"Given two chromosomes, finds the points in the chromosomes where
@@ -134,7 +111,7 @@
 	 run-phase will return a solution as soon as it finds one, otherwise
 	 return the best chromosome from the phase"
 	[puzzle pop-size num-gens]
-	(let [population (generate-population puzzle pop-size (:rows puzzle))
+	(let [population (gen-population puzzle pop-size (:rows puzzle))
 		  num-best (* 2 (:rows puzzle))
 		  num-cross num-best
 		  mut-prob 50
