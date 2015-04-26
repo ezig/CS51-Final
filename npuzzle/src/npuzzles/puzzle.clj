@@ -46,7 +46,7 @@
 		  zeroCol (col-of-tile puzzle 0)
 		  moves {:up (not (= zeroRow (- rows 1))), :down (not (= zeroRow 0)),
 		   :left (not (= zeroCol (- cols 1))) , :right (not (= zeroCol 0))}]
-		(keys (into {} (filter #(val %) moves)))))
+		(vec (keys (into {} (filter #(val %) moves))))))
 
 (declare swap)
 (declare find-tile)

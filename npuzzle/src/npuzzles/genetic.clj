@@ -58,13 +58,13 @@
 	(let [next-dir (random-dir puzzle (opposite-dir prev-dir))]
 		{:puzzle (slide puzzle next-dir) :prev-dir next-dir}))
 
-(defn generate-chromosome
+(defn gen-chromosome
 	"Given a starting puzzle state, make moves number of random (valid) moves
 	to build a list of genes"
 	[length]
 	(into [] (map (fn [x] (rand)) (range 0 length))))
 
-(defn generate-population
+(defn gen-population
 	"Given an initial puzzle and a pop-size and chromosome size, creates
 	list of random chromosomes"
 	[pop-size chrom-size]
@@ -77,6 +77,21 @@
 	max-size, the chromosome will be truncated randomly"
 	[chromosome]
 	(assoc chromosome (rand-int (+ (count chromosome) -1)) (rand)))
+
+(defn interpret-chromsome
+	"Given a chromosome and a puzzle, returns a the final puzzle
+	and a vector of directions"
+	[chromosome puzzle]
+	(loop [chrom chromosome
+		   puz puzzle
+		   dir-list []]
+		(if (empty? chrom)
+			[puz, dir-list]
+			(let [valid-dirs (valid-directions puz)
+				  next-dir (valid-dirs (int (* (chrom 0) (count valid-dirs))))
+				  new-chrom (into [] (drop 1 chrom))]
+				  ; next-dir :right]
+				(recur new-chrom (slide puz next-dir) (conj dir-list next-dir))))))
 
 (defn rand-intersection
 	"Given two chromosomes, returns a vector of two indices representing the
