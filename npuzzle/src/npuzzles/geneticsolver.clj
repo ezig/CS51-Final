@@ -6,22 +6,27 @@
 
 ;PUBLIC FUNCTIONS
 
-; (declare run-phase)
-; (defn solve
-; 	"Given a puzzle, runs the genetic algorithm with specified number of
-; 	 generations and phases until either a solution is found,
-; 	 in which case the chromosome that solves the puzzle is returned,
-; 	 or Nil if a solution is not found within the specified limits"
-; 	[puzzle generations phases]
-; 	(loop [n num-gens
-; 		   p population]
-; 			(if (= n 0)
-; 				nil
-; 				(let [best-chrom (run-phase puzzle (:rows puzzle) generations)
-; 					  best (first new-pop)]
-; 					(if (solved? (:puzzle (last best)))
-; 						(first new-pop)
-; 						(recur (- n 1) new-pop)))))))
+(declare run-phase)
+;Take this out later
+(declare fitness)
+(defn solve
+	"Given a puzzle, runs the genetic algorithm with specified number of
+	 generations and phases until either a solution is found,
+	 in which case the chromosome that solves the puzzle is returned,
+	 or Nil if a solution is not found within the specified limits"
+	[puzzle phases generations]
+	(loop [n phases
+		   puz puzzle
+		   solution []]
+			(if (= n 0)
+				nil
+				(let [best-chrom (run-phase puzzle (:rows puz) generations)
+					  best-gene (last best-chrom)
+					  new-solution (concat solution (drop 1 best-chrom))]
+					(println (fitness best-chrom))
+					(if (solved? (:puzzle best-gene))
+						new-solution
+						(recur (- n 1) (:puzzle best-gene) new-solution))))))
 
 ; PRIVATE FUNCTIONS
 ; TODO: PRIVATIZE THESE WHEN DONE TESTING
@@ -129,7 +134,7 @@
 	(let [population (generate-population puzzle pop-size (:rows puzzle))
 		  num-best (* 2 (:rows puzzle))
 		  num-cross num-best
-		  mut-prob 60
+		  mut-prob 50
 		  max-size (* 20 (:rows puzzle))]
 		(loop [n num-gens
 			   p population]

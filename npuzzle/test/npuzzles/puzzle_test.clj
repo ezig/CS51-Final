@@ -140,3 +140,12 @@
 			  (is (not (solved? p3)))
 			  (is (solved? p4))
 			  (is (solved? p5))))
+
+(deftest valid-directions-test
+	(testing "valid-directions")
+		(let [p1 (gen-puzzle 3 3 [1 2 3 4 5 6 7 0 8])
+	    	  p2 (gen-puzzle 3 3 [2 1 3 5 4 6 0 7 8])
+	    	  p3 (gen-puzzle 3 3 [1 2 3 4 0 5 6 7 8])]
+	    	(is (= '(:down :left :right) (sort (valid-directions p1))))
+			(is (= '(:down :left) (sort (valid-directions p2))))
+			(is (= '(:down :left :right :up) (sort (valid-directions p3))))))
