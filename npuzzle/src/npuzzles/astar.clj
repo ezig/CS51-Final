@@ -1,6 +1,8 @@
 (ns npuzzles.astar
 	(:use [npuzzles.puzzle])
-    (:use [npuzzles.heap]))
+    (:use [npuzzles.heap])
+    (:require [taoensso.timbre.profiling :as profiling
+           :refer (pspy pspy* profile defnp p p*)]))
 
 ;PRIVATE FUNCTIONS
 (defn gen-children 
@@ -16,7 +18,7 @@
 	           childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-tree) childPuzzles)]
 	(vec (filter #(not= (:tiles (:puzzle %)) parentTiles) childPuzzleTrees))))
 
-(defn member 
+(defnp member 
 	"Given a tree-puzzle and a vector of tree-puzzles, returns true if there is a puzzle 
 	there is a TreePuzzle whose puzzle has the same tile formation as the tiles of the puzzle of
 	the TreePuzzle that was passed in"
@@ -28,10 +30,10 @@
     		(let [initial (puzzles 0) 
     		  	  others (vec (rest puzzles))
     		  	  puzzle2 (:puzzle initial)
-    		 	    score2 (:h initial)]
+    		 	  score2 (:h initial)]
     		(if (= puzzle puzzle2)
     			 (if (< score score2)
-    			 	 [(vec (concat searched others))  true]
+    			 	 [(p :cons (vec (concat searched others))) true]
     			 	 [plist false])
     			 (recur others (conj searched initial))
 

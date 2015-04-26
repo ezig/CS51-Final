@@ -1,5 +1,7 @@
 (ns npuzzles.heap
-	(:use [npuzzles.puzzle]))
+	(:use [npuzzles.puzzle])
+	(:require [taoensso.timbre.profiling :as profiling
+           :refer (pspy pspy* profile defnp p p*)]))
  
 (comment 
   What we prioritize in our priority queue is insertion, deletion, and 
@@ -29,7 +31,7 @@
      (let [treePuzzle (puzzle-to-tree firstPuzzle 0 nil)]
         [treePuzzle]))
 
-(defn insert-queue
+(defnp insert-queue
 	"Given a TreePuzzle and a priority queue of TreePuzzles, inserts the
 	TreePuzzle into the priority queue. Helper function for insert-children"
 	[tpuzzle pqueue]
@@ -39,7 +41,7 @@
       (let [fst (queue 0)] 
         (recur (vec (rest queue)) (conj searched fst))))))
 
-(defn dequeue
+(defnp dequeue
 	"Returns the first item (lowest cost, highest priority TreePuzzle) off the queue."
  [pqueue] 
    (if (= pqueue []) 
