@@ -4,7 +4,7 @@
            :refer (pspy pspy* profile defnp p p*)])
   (:require [clojure.data.priority-map :as pmap]))
 
- 
+(comment
 (comment 
   What we prioritize in our priority queue is insertion, deletion, and 
   extracting the first ezlement. A binary minheap is a very good choice for this,
@@ -88,4 +88,4 @@
 (defn puzzle-to-tree 
   [puz depth parent]
   (let [distance (+ depth (manhattan-distance puz))]
-       {:puzzle puz, :parent parent, :g depth, :h distance}))
+       {:puzzle puz, :parent parent, :g depth, :h distance})))
