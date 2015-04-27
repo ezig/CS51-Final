@@ -24,22 +24,24 @@
 
 (declare run-phase)
 (defn solve
-	"Given a puzzle, runs the genetic algorithm with specified number of
-	 generations and phases until either a solution is found,
-	 in which case the chromosome that solves the puzzle is returned,
-	 or Nil if a solution is not found within the specified limits"
-	[puzzle phases generations pop-size]
-	(loop [n phases
+	"Given a puzzle, an initial population size, and specified numbers of
+	 generations and phases, runs the genetic algorithm
+	 until either a solution is found, in which case the vector of moves that
+	 solved the chromosome is returned, or Nil if a solution is not found 
+	 within the specified limits"
+	[puzzle pop-size num-phases num-gens]
+	(loop [n num-phases
 		   puz puzzle
 		   solution []]
-			(if (= n 0)
+			(if (zero? n)
 				nil
-				(let [best-chrom (run-phase puzzle (:rows puz) generations)
-					  best-gene (last best-chrom)
-					  new-solution (concat solution (drop 1 best-chrom))]
-					(if (solved? (:puzzle best-gene))
+				(let [best-chrom (run-phase puzzle pop-size num-gens)
+					  interp (interpret-chromosome best-chrom puzzle)
+					  new-puzzle (interp 0)
+					  new-solution (into [] (concat solution (interp 1)))]
+					(if (solved? new-puzzle)
 						new-solution
-						(recur (- n 1) (:puzzle best-gene) new-solution))))))
+						(recur (- n 1) new-puzzle new-solution))))))
 
 ; PRIVATE FUNCTIONS
 ; TODO: PRIVATIZE THESE WHEN DONE TESTING
