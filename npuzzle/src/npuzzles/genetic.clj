@@ -20,7 +20,9 @@
 
 (ns npuzzles.genetic
 	(:use [npuzzles.puzzle])
-	(:require [clojure.math.numeric-tower :as math]))
+	(:require [clojure.math.numeric-tower :as math])
+    (:require [taoensso.timbre.profiling :as profiling
+           :refer (pspy pspy* profile defnp p p*)]))
 
 ;PUBLIC FUNCTIONS
 
@@ -48,7 +50,7 @@
 
 ; PRIVATE FUNCTIONS
 ; TODO: PRIVATIZE THESE WHEN DONE TESTING
-(defn- opposite-dir
+(defnp opposite-dir
 	"Given a direction, returns the opposite direction 
 	returns nil if an invalid direction keyword is passed in"
 	 [dir]
@@ -78,7 +80,7 @@
 	[chromosome]
 	(assoc chromosome (rand-int (+ (count chromosome) -1)) (rand)))
 
-(defn interpret-chromosome
+(defnp interpret-chromosome
 	"Given a chromosome and a puzzle, returns a vector containing the final
 	puzzle state and a vector of the directions the puzzle was slid"
 	[chromosome puzzle]
@@ -94,7 +96,7 @@
 				  new-chrom (into [] (drop 1 chrom))]
 				(recur new-chrom (slide puz next-dir) next-dir (conj dir-list next-dir))))))
 
-(defn fitness
+(defnp fitness
 	"Given a chromosome, determines the fitness,
 	(right now, this is just the manhattan-distance of the final puzzle state 
 	that corresponds to interpreting the chromosome as a list of moves relative
