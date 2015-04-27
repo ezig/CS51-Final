@@ -3,6 +3,9 @@
 	(:require [npuzzles.astar :as astar])
 	(:require [npuzzles.genetic :as genetic])
   	(:require [npuzzles.heap :as heap])
+   (:require [clojure.data.priority-map :as pmap])
+  (:require [taoensso.timbre.profiling :as profiling
+           :refer (pspy pspy* profile defnp p p*)])
   	(:gen-class))
 
 (defn -main
