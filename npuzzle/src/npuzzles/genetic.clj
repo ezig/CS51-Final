@@ -16,6 +16,8 @@
 ; state with an associated list of valid moves, each gene represents which
 ; of those moves to take. 
 
+; (time (dotimes [n 10] (println (count (filter #(not (nil? %)) (map #(solve % 10 1 10) (filter #(solvable? %) (map #(gen-puzzle 2 2 %) (map #(into [] %) (permutations [1 2 3 0]))))))))))
+
 (ns npuzzles.genetic
 	(:use [npuzzles.puzzle])
 	(:require [clojure.math.numeric-tower :as math]))
@@ -23,6 +25,7 @@
 ;PUBLIC FUNCTIONS
 
 (declare run-phase)
+(declare interpret-chromosome)
 (defn solve
 	"Given a puzzle, an initial population size, and specified numbers of
 	 generations and phases, runs the genetic algorithm
