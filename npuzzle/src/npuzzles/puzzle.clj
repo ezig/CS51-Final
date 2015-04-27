@@ -83,8 +83,10 @@
 	 	     	  final_col (mod final_index cols)
 				  column (col-of-tile puzzle hd)
 				  row (row-of-tile puzzle hd)]
-            	(recur (+ d (+ (abs (- row final_row)) (abs (- column final_col))))
-            		tl)))))
+				(if (= hd 0) 
+					(recur d tl)
+            		(recur (+ d (+ (abs (- row final_row)) (abs (- column final_col))))
+            			tl))))))
 
 (defn dir-between
 	"Given two puzzles, determines the direction to slide from puzzle1
