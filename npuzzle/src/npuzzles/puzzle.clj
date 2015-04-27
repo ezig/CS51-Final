@@ -46,7 +46,7 @@
 		  zeroCol (col-of-tile puzzle 0)
 		  moves {:up (not (= zeroRow (- rows 1))), :down (not (= zeroRow 0)),
 		   :left (not (= zeroCol (- cols 1))) , :right (not (= zeroCol 0))}]
-		(keys (into {} (filter #(val %) moves)))))
+		(vec (keys (into {} (filter #(val %) moves))))))
 
 (declare swap)
 (declare find-tile)
@@ -98,16 +98,16 @@
 			(= (- (:cols puzzle1)) diff) :down
 			:else nil)))
 
-; Not sure if we're gonna use this
-; (defn gen-children
-; 	"Given a puzzle and an optional direction, returns a list of all states
-; 	within one valid move of the puzzle except those in dir direction.
-; 	If no direction is provided, will return list of all
-; 	valid states within one move."
-; 	([puzzle] (gen-children puzzle nil))
-; 	([puzzle dir]
-; 		(let [dirs (filter #(not (= % dir)) (valid-directions puzzle))]
-; 			(map #(slide puzzle %) dirs))))
+(defn check-solution
+	"Given a puzzle and a vector of directions representing a solution,
+	slides the puzzle by the sequence of directions and returns true if the
+	final puzzle is solved, false otherwise"
+	[puzzle dirs]
+	(loop [puz puzzle
+		   dir-list dirs]
+		(if (empty? dir-list)
+			(solved? puz)
+			(recur (slide puz (first dir-list)) (rest dir-list)))))
 
 ;PRIVATE FUNCTIONS
 (defn- abs [n] (max n (- n)))
