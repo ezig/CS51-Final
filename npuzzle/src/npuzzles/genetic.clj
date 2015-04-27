@@ -50,7 +50,7 @@
 
 ; PRIVATE FUNCTIONS
 ; TODO: PRIVATIZE THESE WHEN DONE TESTING
-(defnp opposite-dir
+(defn opposite-dir
 	"Given a direction, returns the opposite direction 
 	returns nil if an invalid direction keyword is passed in"
 	 [dir]
@@ -80,7 +80,7 @@
 	[chromosome]
 	(assoc chromosome (rand-int (+ (count chromosome) -1)) (rand)))
 
-(defnp interpret-chromosome
+(defnp interpret-chromosome-helper
 	"Given a chromosome and a puzzle, returns a vector containing the final
 	puzzle state and a vector of the directions the puzzle was slid"
 	[chromosome puzzle]
@@ -95,6 +95,8 @@
 				  next-dir (valid-dirs (int (* (chrom 0) (count valid-dirs))))
 				  new-chrom (into [] (drop 1 chrom))]
 				(recur new-chrom (slide puz next-dir) next-dir (conj dir-list next-dir))))))
+
+(def interpret-chromosome (memoize interpret-chromosome-helper))
 
 (defnp fitness
 	"Given a chromosome, determines the fitness,
