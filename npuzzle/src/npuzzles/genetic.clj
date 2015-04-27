@@ -1,8 +1,6 @@
 (ns npuzzles.genetic
 	(:use [npuzzles.puzzle])
-	(:use [clojure.set :only (intersection)]))
-
-(defrecord Gene [puzzle prev-dir])
+	(:require [clojure.math.numeric-tower :as math]))
 
 ;PUBLIC FUNCTIONS
 
@@ -28,7 +26,8 @@
 ; PRIVATE FUNCTIONS
 ; TODO: PRIVATIZE THESE WHEN DONE TESTING
 (defn opposite-dir
-	"Given a direction, returns the opposite"
+	"Given a direction, returns the opposite direction 
+	returns nil if an invalid direction keyword is passed in"
 	 [dir]
 	 (case dir
 	 	:up :down
@@ -38,8 +37,8 @@
 	 	nil))
 
 (defn gen-chromosome
-	"Given a starting puzzle state, make moves number of random (valid) moves
-	to build a list of genes"
+	"Given a desired chromosome length, returns a list of genes where each
+	 gene is a floating point number in (0, 1]"
 	[length]
 	(into [] (map (fn [x] (rand)) (range 0 length))))
 
@@ -57,7 +56,7 @@
 	[chromosome]
 	(assoc chromosome (rand-int (+ (count chromosome) -1)) (rand)))
 
-(defn interpret-chromsome
+(defn interpret-chromosome
 	"Given a chromosome and a puzzle, returns a the final puzzle
 	and a vector of directions"
 	[chromosome puzzle]
@@ -77,7 +76,7 @@
 	"Given a chromosome, determines the fitness
 	(right now, this is just the manhattan-distance of the last gene)"
 	[chromosome puzzle]
-	(manhattan-distance ((interpret-chromsome chromosome puzzle) 0)))
+	(manhattan-distance ((interpret-chromosome chromosome puzzle) 0)))
 
 (defn rand-crossover
 	"Given two chromosomes, finds the points in the chromosomes where
@@ -89,10 +88,10 @@
 		  idx2 (rand-int (count chrom2))]
 		(into [] (concat (take idx1 chrom1) (drop idx2 chrom2)))))
 
-; (defn n-best
-; 	"Given a population, returns the n most fit chromosomes"
-; 	[population n]
-; 	(take n (sort-by fitness population)))
+(defn best
+	"Given a population, returns the most fit chromosomes"
+	[population puzzle]
+	(first (sort-by #(fitness % puzzle) population)))
 
 (defn battle
 	"Given two chromosomes and a puzzle, returns the one with the
@@ -107,7 +106,7 @@
 	n / 2 by randomly choosing pairs from the old population and keeping
 	the more fit (lower fitness score) choice relative to the puzzle"
 	[population puzzle]
-	(loop [old-pop population
+	(loop [old-pop (shuffle population)
 		   new-pop []]
 		(let [pair (take 2 old-pop)
 			  next-old-pop (drop 2 old-pop)]
@@ -116,35 +115,43 @@
 				(let [winner (battle (first pair) (last pair) puzzle)]
 				(recur next-old-pop (conj new-pop winner)))))))
 
-; (defn run-generation
-; 	"Given a population, the number of best to pick from the generation,
-; 	the number of crossover chromosomes to generation, the mutation probability
-; 	(int out of 100), the max size of the individual chromosomes returns a
-; 	new population sorted by fitness"
-; 	[population num-best num-cross mut-prob max-size]
-; 	(let [best (n-best population num-best)
-; 		  crossovers (repeatedly num-cross #(crossover (rand-nth best) (rand-nth best)))
-; 		  new-pop (concat best crossovers)
-; 		  mut-pop (map #(if (< (rand-int 100) mut-prob) (mutate % max-size) %) new-pop)]
-; 		  (vec (sort-by fitness mut-pop))))
+(defn perform-crossover
+	"Given a population and a number of crossovers, returns num-cross
+	number of crossed-over chromosome based on randomly chosen pairs"
+	[p num-cross]
+	(into [] (repeatedly num-cross #(rand-crossover (rand-nth p) (rand-nth p)))))
+
+
+(defn perform-mutation
+	"Given a population and a number of mutations, returns num-mut 
+	mutated chromsomes based on randomly chosen chromosomes in the population"
+	[p num-mut]
+	(into [] (repeatedly num-mut #(mutate (rand-nth p)))))
+
+(defn run-generation
+	"Given a population, the number of best to pick from the generation,
+	the number of crossover chromosomes to generation, the mutation probability
+	(int out of 100), the max size of the individual chromosomes returns a
+	new population sorted by fitness"
+	[population cross-chance mut-chance puzzle]
+	(let [new-pop (tournament population puzzle)
+		  new-pop-size (count new-pop)
+		  num-cross (math/ceil (* cross-chance new-pop-size))
+		  num-mut (math/ceil (* mut-chance new-pop-size))
+		  crossovers (perform-crossover new-pop num-cross)
+		  mutations (perform-mutation new-pop num-mut)]
+		  (into [] (concat new-pop crossovers mutations))))
 
 (defn run-phase
 	"Given a starting puzzle state, generates a population of pop-size
 	 chromosomes and then runs num-gens number of generations within the phase.
 	 run-phase will return a solution as soon as it finds one, otherwise
 	 return the best chromosome from the phase"
-	[puzzle pop-size num-gens]
-	(let [population (gen-population puzzle pop-size (:rows puzzle))
-		  num-best (* 2 (:rows puzzle))
-		  num-cross num-best
-		  mut-prob 50
-		  max-size (* 20 (:rows puzzle))]
-		(loop [n num-gens
-			   p population]
-			(if (= n 0)
-				(first p)
-				(let [new-pop (run-generation p num-best num-cross mut-prob max-size)
-					  best (first new-pop)]
-					(if (solved? (:puzzle (last best)))
-						(first new-pop)
-						(recur (- n 1) new-pop)))))))
+	[{rows :rows :as puzzle} pop-size num-gens]
+	(let [chrom-length (int (/ (* (* rows rows) (+ (* rows rows) -1)) 2))
+		  population (gen-population pop-size chrom-length)]
+		(loop [p population
+			   n num-gens]
+			(if (zero? n)
+				(best p puzzle)
+				(recur (run-generation p 0.9 0.1 puzzle) (+ n -1))))))
