@@ -1,6 +1,6 @@
 (ns npuzzles.heap
-	(:use [npuzzles.puzzle])
-	(:require [taoensso.timbre.profiling :as profiling
+  (:use [npuzzles.puzzle])
+  (:require [taoensso.timbre.profiling :as profiling
            :refer (pspy pspy* profile defnp p p*)]))
  
 (comment 
@@ -24,25 +24,25 @@
 ; Public Functions
 (declare puzzle-to-tree)
 (defn init-queue 
-	"Given a puzzle, returns a Priority Queue with one element: a
+  "Given a puzzle, returns a Priority Queue with one element: a
      TreePuzzle with nil parent, depth g = 0, and appropriate h 
      given by the heuristic function."
      [firstPuzzle]
      (let [treePuzzle (puzzle-to-tree firstPuzzle 0 nil)]
         [treePuzzle]))
 
-(defnp insert-queue
-	"Given a TreePuzzle and a priority queue of TreePuzzles, inserts the
-	TreePuzzle into the priority queue. Helper function for insert-children"
-	[tpuzzle pqueue]
-	(loop [queue pqueue searched []]
-		(if (or (= queue []) (nil? queue) (< (:h tpuzzle) (:h (first queue))))
-			(vec (concat (conj searched tpuzzle) queue))
+(defn insert-queue
+  "Given a TreePuzzle and a priority queue of TreePuzzles, inserts the
+  TreePuzzle into the priority queue. Helper function for insert-children"
+  [tpuzzle pqueue]
+  (loop [queue pqueue searched []]
+    (if (or (= queue []) (nil? queue) (< (:h tpuzzle) (:h (first queue))))
+      (vec (concat (conj searched tpuzzle) queue))
       (let [fst (queue 0)] 
         (recur (vec (rest queue)) (conj searched fst))))))
 
-(defnp dequeue
-	"Returns the first item (lowest cost, highest priority TreePuzzle) off the queue."
+(defn dequeue
+  "Returns the first item (lowest cost, highest priority TreePuzzle) off the queue."
  [pqueue] 
    (if (= pqueue []) 
    (throw (Throwable. "Invalid Priority Queue"))
@@ -51,6 +51,6 @@
 
 ; Private Functions
 (defn puzzle-to-tree 
-	[puz depth parent]
-	(let [distance (+ depth (manhattan-distance puz))]
+  [puz depth parent]
+  (let [distance (+ depth (manhattan-distance puz))]
        {:puzzle puz, :parent parent, :g depth, :h distance}))
