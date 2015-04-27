@@ -109,6 +109,8 @@
 			(solved? puz)
 			(recur (slide puz (first dir-list)) (rest dir-list)))))
 
+
+
 ;PRIVATE FUNCTIONS
 (defn- abs [n] (max n (- n)))
 
