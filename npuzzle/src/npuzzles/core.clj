@@ -2,7 +2,10 @@
 	(:require [npuzzles.puzzle :as puzzle])
 	(:require [npuzzles.astar :as astar])
 	(:require [npuzzles.geneticsolver :as genetic])
-  	(:require [npuzzles.heap :as heap])
+  (:require [npuzzles.heap :as heap])
+  (:require [clojure.data.priority-map :as pmap])
+  (:require [taoensso.timbre.profiling :as profiling
+           :refer (pspy pspy* profile defnp p p*)])
   	(:gen-class))
 
 (defn -main
