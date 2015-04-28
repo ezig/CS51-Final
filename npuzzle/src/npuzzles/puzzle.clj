@@ -43,7 +43,7 @@
 
 (declare find-tile)
 
-(defnp valid-directions-helper
+(defn valid-directions-helper
 	"Given a puzzle, returns a list of direction keywords of valid moves"
 	[{rows :rows cols :cols :as puzzle}] 
 		(let [zero-idx (find-tile puzzle 0)
@@ -57,7 +57,7 @@
 
 (declare swap)
 
-(defnp slide-helper
+(defn slide-helper
 	"Given a direction, moves puzzle in that direction if it is a valid move"
 	[{cols :cols rows :rows tiles :tiles :as puzzle} direction]
 	(if (not (nil? (some #{direction} (valid-directions puzzle))))
@@ -80,7 +80,7 @@
 (declare abs)
 (declare col-of-tile)
 (declare row-of-tile)
-(defnp manhattan-distance-helper
+(defn manhattan-distance-helper
 	"Given a Puzzle, calculates its fitness using the Manhattan Distance 
 	 heuristic function"
 	[{cols :cols rows :rows tiles :tiles :as puzzle}]
@@ -113,7 +113,8 @@
 			(= (- (:cols puzzle1)) diff) :down
 			:else nil)))
 
-(defn check-solution
+; TODO can I combine check and visualize? seems like something is factorable
+(defn check-sol
 	"Given a puzzle and a vector of directions representing a solution,
 	slides the puzzle by the sequence of directions and returns true if the
 	final puzzle is solved, false otherwise"
@@ -124,6 +125,18 @@
 			(solved? puz)
 			(recur (slide puz (first dir-list)) (rest dir-list)))))
 
+(defn visualize-sol
+	"Given a puzzle and a vector of directions representing a solution,
+	slides the puzzle by the sequence of directions and prints the puzzle
+	at each step"
+	[puzzle dirs]
+	(loop [puz puzzle
+		   dir-list dirs]
+		(println (to-string puz))
+		(println "")
+		(if (empty? dir-list)
+			nil
+			(recur (slide puz (first dir-list)) (rest dir-list)))))
 
 
 ;PRIVATE FUNCTIONS
@@ -158,8 +171,8 @@
 			inv
 			(let [hd (first lst) tl (rest lst)]
 				(recur (+ inv (count (filter #(< % hd) tl))) tl)))))
-; MADE THIS PUBLIC FOR TESTING PURPOSES
-(defn solvable?
+
+(defn- solvable?
 	"Returns true if a given puzzle is solvable, false otherwise"
 	[{rows :rows cols :cols :as puzzle}]
 	(let [is_odd (odd? (* rows cols))]
