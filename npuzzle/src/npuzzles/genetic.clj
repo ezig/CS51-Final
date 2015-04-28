@@ -21,6 +21,7 @@
 (ns npuzzles.genetic
 	(:use [npuzzles.puzzle])
 	(:require [clojure.math.numeric-tower :as math])
+	(:require clojure.core.memoize)
     (:require [taoensso.timbre.profiling :as profiling
            :refer (pspy pspy* profile defnp p p*)]))
 
@@ -80,7 +81,7 @@
 	[chromosome]
 	(assoc chromosome (rand-int (+ (count chromosome) -1)) (rand)))
 
-(defnp interpret-chromosome-helper
+(defnp interpret-chromosome
 	"Given a chromosome and a puzzle, returns a vector containing the final
 	puzzle state and a vector of the directions the puzzle was slid"
 	[chromosome puzzle]
@@ -95,8 +96,6 @@
 				  next-dir (valid-dirs (int (* (chrom 0) (count valid-dirs))))
 				  new-chrom (into [] (drop 1 chrom))]
 				(recur new-chrom (slide puz next-dir) next-dir (conj dir-list next-dir))))))
-
-(def interpret-chromosome (memoize interpret-chromosome-helper))
 
 (defnp fitness
 	"Given a chromosome, determines the fitness,

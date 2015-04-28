@@ -1,6 +1,8 @@
 (ns npuzzles.puzzle
+	(:require clojure.core.memoize)
     (:require [taoensso.timbre.profiling :as profiling
        :refer (pspy pspy* profile defnp p p*)]))
+(alias 'memo 'clojure.core.memoize)
 
 ; Puzzle record has integer number of rows, columsns
 ; and an row * column length vector of tiles [0, row * column)
@@ -51,7 +53,7 @@
 			   :left (not (= zeroCol (- cols 1))) , :right (not (= zeroCol 0))}]
 			(vec (keys (into {} (filter #(val %) moves))))))
 
-(def valid-directions (memoize valid-directions-helper))
+(def valid-directions (memo/memo valid-directions-helper))
 
 (declare swap)
 
@@ -68,7 +70,7 @@
 			{:rows rows :cols cols :tiles (swap tiles emptyP newP)})
 		puzzle))
 
-(def slide (memoize slide-helper))
+(def slide (memo/memo slide-helper))
 
 (defn solved?
 	"Given a puzzle, returns true if it is solved"
@@ -97,7 +99,7 @@
             		(recur (+ d (+ (abs (- row final_row)) (abs (- column final_col))))
             			tl))))))
 
-(def manhattan-distance (memoize manhattan-distance-helper))
+(def manhattan-distance (memo/memo manhattan-distance-helper))
 
 (defn dir-between
 	"Given two puzzles, determines the direction to slide from puzzle1
