@@ -29,7 +29,6 @@
                     (                              )
                      ------------------------------ ")
  	(println "Under Cow-struction")
-  (println (time (dotimes [n 100] (println n) (if (nil? (genetic/solve (puzzle/gen-puzzle 3) 200 5 500)) (println "X"))))))
-  ; (let [x (puzzle/gen-puzzle 2)]
-  ;   (map (fn [x] (print-str (puzzle/to-string x))) (efficient/solve x))
-  ; ))
+  (let [x (puzzle/gen-puzzle 2)]
+    (map (fn [x] (print-str (puzzle/to-string x))) (efficient/solve x))
+  ))
