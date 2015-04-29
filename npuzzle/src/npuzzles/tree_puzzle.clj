@@ -8,7 +8,7 @@
 
 (defn puzzle-to-tree 
   [puz depth parent]
-  (let [distance (+ depth (manhattan-distance puz))]
+  (let [distance (+ depth (misplaced-tiles puz))]
        {:puzzle puz, :parent parent, :g depth, :h distance}))
 
 (defn gen-children 
