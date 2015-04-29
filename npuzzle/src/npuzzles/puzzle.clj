@@ -1,6 +1,8 @@
 (ns npuzzles.puzzle
-	(:require [taoensso.timbre.profiling :as profiling
-           :refer (pspy pspy* profile defnp p p*)]))
+	(:require clojure.core.memoize)
+    (:require [taoensso.timbre.profiling :as profiling
+       :refer (pspy pspy* profile defnp p p*)]))
+(alias 'memo 'clojure.core.memoize)
 
 ; Puzzle record has integer number of rows, columsns
 ; and an row * column length vector of tiles [0, row * column)
@@ -39,20 +41,23 @@
 				   	   (recur (str string "\n" hd) tl)
 				   	   (recur (str string hd) tl))))))
 
-(declare row-of-tile)
-(declare col-of-tile)
-(defn valid-directions
+(declare find-tile)
+
+(defn valid-directions-helper
 	"Given a puzzle, returns a list of direction keywords of valid moves"
 	[{rows :rows cols :cols :as puzzle}] 
-	(let [zeroRow (row-of-tile puzzle 0)
-		  zeroCol (col-of-tile puzzle 0)
-		  moves {:up (not (= zeroRow (- rows 1))), :down (not (= zeroRow 0)),
-		   :left (not (= zeroCol (- cols 1))) , :right (not (= zeroCol 0))}]
-		(vec (keys (into {} (filter #(val %) moves))))))
+		(let [zero-idx (find-tile puzzle 0)
+			  zeroRow (quot zero-idx cols)
+			  zeroCol (mod zero-idx cols)
+			  moves {:up (not (= zeroRow (- rows 1))), :down (not (= zeroRow 0)),
+			   :left (not (= zeroCol (- cols 1))) , :right (not (= zeroCol 0))}]
+			(vec (keys (into {} (filter #(val %) moves))))))
+
+(def valid-directions (memo/memo valid-directions-helper))
 
 (declare swap)
-(declare find-tile)
-(defnp slide
+
+(defn slide-helper
 	"Given a direction, moves puzzle in that direction if it is a valid move"
 	[{cols :cols rows :rows tiles :tiles :as puzzle} direction]
 	(if (not (nil? (some #{direction} (valid-directions puzzle))))
@@ -65,13 +70,17 @@
 			{:rows rows :cols cols :tiles (swap tiles emptyP newP)})
 		puzzle))
 
+(def slide (memo/memo slide-helper))
+
 (defn solved?
 	"Given a puzzle, returns true if it is solved"
 	[{rows :rows cols :cols tiles :tiles}]
 	(= tiles (concat (range 1 (* rows cols)) (list 0))))
 
 (declare abs)
-(defnp manhattan-distance
+(declare col-of-tile)
+(declare row-of-tile)
+(defn manhattan-distance-helper
 	"Given a Puzzle, calculates its fitness using the Manhattan Distance 
 	 heuristic function"
 	[{cols :cols rows :rows tiles :tiles :as puzzle}]
@@ -85,8 +94,12 @@
 	 	     	  final_col (mod final_index cols)
 				  column (col-of-tile puzzle hd)
 				  row (row-of-tile puzzle hd)]
-            	(recur (+ d (+ (abs (- row final_row)) (abs (- column final_col))))
-            		tl)))))
+				(if (= hd 0) 
+					(recur d tl)
+            		(recur (+ d (+ (abs (- row final_row)) (abs (- column final_col))))
+            			tl))))))
+
+(def manhattan-distance (memo/memo manhattan-distance-helper))
 
 (defn dir-between
 	"Given two puzzles, determines the direction to slide from puzzle1
@@ -100,7 +113,8 @@
 			(= (- (:cols puzzle1)) diff) :down
 			:else nil)))
 
-(defn check-solution
+; TODO can I combine check and visualize? seems like something is factorable
+(defn check-sol
 	"Given a puzzle and a vector of directions representing a solution,
 	slides the puzzle by the sequence of directions and returns true if the
 	final puzzle is solved, false otherwise"
@@ -110,6 +124,20 @@
 		(if (empty? dir-list)
 			(solved? puz)
 			(recur (slide puz (first dir-list)) (rest dir-list)))))
+
+(defn visualize-sol
+	"Given a puzzle and a vector of directions representing a solution,
+	slides the puzzle by the sequence of directions and prints the puzzle
+	at each step"
+	[puzzle dirs]
+	(loop [puz puzzle
+		   dir-list dirs]
+		(println (to-string puz))
+		(println "")
+		(if (empty? dir-list)
+			nil
+			(recur (slide puz (first dir-list)) (rest dir-list)))))
+
 
 ;PRIVATE FUNCTIONS
 (defn- abs [n] (max n (- n)))
@@ -143,8 +171,8 @@
 			inv
 			(let [hd (first lst) tl (rest lst)]
 				(recur (+ inv (count (filter #(< % hd) tl))) tl)))))
-; MADE THIS PUBLIC FOR TESTING PURPOSES
-(defn solvable?
+
+(defn- solvable?
 	"Returns true if a given puzzle is solvable, false otherwise"
 	[{rows :rows cols :cols :as puzzle}]
 	(let [is_odd (odd? (* rows cols))]

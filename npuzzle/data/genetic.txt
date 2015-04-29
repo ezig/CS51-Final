@@ -1,0 +1,136 @@
+genetic results:
+
+2X2
+1.
+trials: 1000
+puzzle size: 2x2
+pop-size: 10
+generations: 10
+phases: 1
+
+accuracy: 898/1000
+total time: 6.78789569 seconds
+average time: .006787896 seconds 
+
+2.
+trials: 1000
+puzzle size: 2x2
+pop-size: 20
+generations: 10
+phases: 1
+
+accuracy: 897/1000
+total time: 14.909315011 seconds
+average time: .014909315 seconds
+
+3.
+trials: 1000
+puzzle size: 2x2
+pop-size: 10
+generations: 20
+phases: 1
+
+accuracy: 897/1000
+total time: 10.978799156 seconds
+average time: .010978799 seconds
+
+
+4.
+trials: 1000
+puzzle size: 2x2
+pop-size: 10
+generations: 10
+phases: 2
+
+accuracy: 939/1000
+total time: 8.230210431 seconds
+average time: .00823021 seconds
+
+5.
+trials: 1000
+puzzle size: 2x2
+pop-size: 10
+generations: 10
+phases: 3
+
+accuracy: 952/1000
+total time: 8.110889346 seconds
+average time: .008110889 seconds
+
+6.
+trials: 1000
+puzzle size: 2x2
+pop-size: 10
+generations: 10
+phases: 4
+
+accuracy: 947/1000
+total time: 9.207165584 seconds
+average time: 0.009207166 seconds
+
+7.
+trials: 1000
+puzzle size: 2x2
+pop-size: 10
+generations: 10
+phases: 4
+
+accuracy: 989/1000
+total time: 10.021810047 seconds
+average time: 0.01002181 seconds
+
+3X3
+1.
+trials: 100
+puzzle size: 3x3
+pop-size: 100
+generations: 100
+phases: 5
+
+accuracy: 64/100
+total time: 485.281 seconds
+average time: 4.85281 seconds
+
+2.
+trials: 100
+puzzle size: 3x3
+pop-size: 200
+generations: 100
+phases: 5
+
+accuracy: 87/100
+total time: 973.048
+average time: 9.73048 seconds
+
+3.
+trials: 100
+puzzle size: 3x3
+pop-size: 100
+generations: 200
+phases: 5
+
+accuracy: 63/100
+total time: 659.714771774
+average time: 6.597147718
+
+4.
+trials: 100
+puzzle size: 3x3
+pop-size: 100
+generations: 100
+phases: 10
+
+accuracy: 83/100
+total time: 902.133089808
+average time: 9.021330898
+
+4.
+trials: 100
+puzzle size: 3x3
+pop-size: 200
+generations: 500
+phases: 5
+
+accuracy: 92/100
+total time: 3402.231
+average time: 34.02231
