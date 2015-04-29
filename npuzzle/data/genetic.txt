@@ -124,7 +124,7 @@ accuracy: 83/100
 total time: 902.133089808
 average time: 9.021330898
 
-4.
+5.
 trials: 100
 puzzle size: 3x3
 pop-size: 200
