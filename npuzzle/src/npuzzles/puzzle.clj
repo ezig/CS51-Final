@@ -101,6 +101,7 @@
 
 (def manhattan-distance (memo/memo manhattan-distance-helper))
 
+
 (defn inversions-vector
 	"Given a vector, returns the number of inversions"
 	[lst]
@@ -124,6 +125,18 @@
 				  current_row (subvec idx_vec row_hd_idx row_tl_idx)
 				  c_row_belongs (filter #(and(>= % row_hd_idx) (< % row_tl_idx)) current_row)]
 				  (recur (+ d (* inversions-vector 2)) (dec cnt) (idx_vec)))))))
+
+(defn misplaced-tiles-helper
+	[{tiles :tiles}]
+	(loop [tiles tiles indx 1 misplaced 0]
+		(let [hd (get tiles 0) tl (into [] (rest tiles))]
+			(if (nil? hd)
+				misplaced
+				(if (or (= hd indx) (= hd 0))
+					(recur tl (+ indx 1) misplaced)
+					(recur tl (+ indx 1) (+ 1 misplaced)))))))
+
+(def misplaced-tiles (memo/memo misplaced-tiles-helper))
 
 (defn dir-between
 	"Given two puzzles, determines the direction to slide from puzzle1

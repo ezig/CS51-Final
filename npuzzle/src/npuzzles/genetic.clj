@@ -23,11 +23,11 @@
     (:require [taoensso.timbre.profiling :as profiling
            :refer (pspy pspy* profile defnp p p*)]))
 
-(def ^:const h-weight 0.9)
-(def ^:const c-weight (+ -1 h-weight))
+(defrecord GAParams [h-weight c-weight cross-weight mut-weight heuristic])
 
-(def ^:const cross-weight 0.9)
-(def ^:const mut-weight (+ -1 cross-weight))
+; Default parameter values
+(def ^:dynamic params {:h-weight 0.9, :c-weight 0.1, :cross-weight 0.9,
+			           :mut-weight 0.1, :heuristic manhattan-distance})
 
 ;PUBLIC FUNCTIONS
 (declare run-phase)
@@ -38,8 +38,11 @@
 	 until either a solution is found, in which case the vector of moves that
 	 solved the chromosome is returned, or Nil if a solution is not found 
 	 within the specified limits"
-	[puzzle pop-size num-phases num-gens]
-	(loop [n num-phases
+	([puzzle pop-size num-phases num-gens new-params]
+	 	(binding [params new-params]
+	 		(solve puzzle pop-size num-phases num-gens)))
+	([puzzle pop-size num-phases num-gens]
+		(loop [n num-phases
 		   puz puzzle
 		   solution []]
 			(if (zero? n)
@@ -50,7 +53,7 @@
 					  new-solution (into [] (concat solution (interp 1)))]
 					(if (solved? new-puzzle)
 						new-solution
-						(recur (- n 1) new-puzzle new-solution))))))
+						(recur (- n 1) new-puzzle new-solution)))))))
 
 ; PRIVATE FUNCTIONS
 (defn- opposite-dir
@@ -105,8 +108,8 @@
 	that corresponds to interpreting the chromosome as a list of moves relative
 	to the puzzle)"
 	[chromosome puzzle]
-	(let [match-score (* h-weight (manhattan-distance ((interpret-chromosome chromosome puzzle) 0)))
-		  cost (* c-weight (count chromosome))]
+	(let [match-score (* (params :h-weight) ((params :heuristic) ((interpret-chromosome chromosome puzzle) 0)))
+		  cost (* (params :c-weight) (count chromosome))]
 		(+ match-score cost)))
 
 (defn- rand-crossover
@@ -187,4 +190,5 @@
 			   n num-gens]
 			(if (zero? n)
 				(best p puzzle)
-				(recur (run-generation p cross-weight mut-weight puzzle) (+ n -1))))))
+				(let [new-pop (run-generation p (params :cross-weight) (params :mut-weight) puzzle)]
+					(recur new-pop (+ n -1)))))))

@@ -21,8 +21,8 @@
   "Given a puzzle, returns a Priority Queue with one element: a
      TreePuzzle with nil parent, depth g = 0, and appropriate h 
      given by the heuristic function."
-     [puzzle]
-     (pmap/priority-map-by queue-sort (:tiles puzzle) (puzzle-to-tree puzzle 0 nil)))
+     [puzzle heuristic]
+     (pmap/priority-map-by queue-sort (:tiles puzzle) (puzzle-to-tree puzzle 0 nil heuristic)))
 
 (defn- insert-queue
   "Given a TreePuzzle and a priority queue of TreePuzzles, inserts the
@@ -65,7 +65,7 @@
 	goal state (by calling solved?). If it is, return the TreePuzzle; if not, insert the child
 	nodes into the priority queue and recursively pass the new priority queue into step.
 	Thus, step will always return a TreePuzzle that corresponds to the goal state."
-	[pqueue]
+	[pqueue heuristic]
     (loop [open pqueue closed (hash-map)]
     	(if (= pqueue []) 
        		(throw (Throwable. "Invalid Priority Queue"))
@@ -73,15 +73,15 @@
             	  tpuzzle (result 0)]
     	(if (solved? (:puzzle tpuzzle))
         	tpuzzle 
-        	(let [[new-open new-closed] (insert-children (gen-children tpuzzle) (result 1) 
+        	(let [[new-open new-closed] (insert-children (gen-children tpuzzle heuristic) (result 1) 
                (assoc closed (:tiles (:puzzle tpuzzle)) (:h tpuzzle)))]
        		(do  (recur new-open new-closed))))))))
 
 (defnp solve
   "Given a initial puzzle state, returns the sequence of puzzles needed to go from that 
   puzzle state to the goal state."
-  [puzzle] 
+  [puzzle heuristic] 
    ;(if (solvable? puzzle)
-   (map-solution (step (init-queue puzzle))))
+   (map-solution (step (init-queue puzzle heuristic) heuristic)))
    ;(println "Not Solvable")))
 
