@@ -7,7 +7,6 @@
   				 [com.taoensso/timbre "3.4.0"]
            [org.clojure/core.memoize "0.5.6"]
   	             [org.clojure/math.numeric-tower "0.0.4"]
-                 [org.clojure/math.combinatorics "0.1.1"]
                  [org.clojure/data.priority-map "0.0.7"]]
   :main ^:skip-aot npuzzles.core
   :target-path "target/%s"
