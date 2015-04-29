@@ -101,6 +101,16 @@
 
 (def manhattan-distance (memo/memo manhattan-distance-helper))
 
+(defn misplaced-tiles
+	[{tiles :tiles}]
+	(loop [tiles tiles indx 1 misplaced 0]
+		(let [hd (get tiles 0) tl (into [] (rest tiles))]
+			(if (nil? hd)
+				misplaced
+				(if (or (= hd indx) (= hd 0))
+					(recur tl (+ indx 1) misplaced)
+					(recur tl (+ indx 1) (+ 1 misplaced)))))))
+
 (defn dir-between
 	"Given two puzzles, determines the direction to slide from puzzle1
 	to get puzzle2. ASSUMES PUZZLES HAVE SAME DIMENSION"
