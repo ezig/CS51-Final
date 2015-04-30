@@ -37,6 +37,7 @@
   )))
 (defn -main
 	"commandline interaction with our program"
+	;genetic arity arguments and body
 	[type trials height width popsize num-phases num-gens new-params]
 	(let [trials (read-string trials) 
 		height (read-string height) 
@@ -53,6 +54,7 @@
 				(recur (- cnt 1)))))
 			:else "input format should be main (solver type) (# of trials)"
 			))
+	;astar arity arguments and body
 	[type trials height width heuristic]
 	(let [trials (read-string trials) 
 		height (read-string height) 
