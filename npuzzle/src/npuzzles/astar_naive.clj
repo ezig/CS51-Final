@@ -3,10 +3,14 @@
   (:use [npuzzles.tree_puzzle])
   (:require [taoensso.timbre.profiling :as profiling :refer (pspy pspy* profile defnp p p*)]))
 
-; In the naive implementation of the A* best first search algorithm, we implement the open
-; and closed sets as vectors. Membership and insertion for vectors, much like for lists, 
-; is O(n). The obvious inefficiency here is apparant for even some 3x3 puzzles
-; that are far from the solved state.
+(comment 
+This was our naïve implementation of the pathfinding A* search algorithm (i.e.
+best-first search). We implement the open set (nodes we plan on visiting) and 
+the closed sets (nodes we have already visited) as vectors (basically Clojure's
+version of an array). Membership, insertion, and removal is linear — we include 
+the naïve implementation to illustrate the dramatic performance improvements 
+of our second implementation and as a tool for reflection in the write-up.
+)
 
 ; These are helper functions for the naive implementation of the A* best-first
 ; search algorithm. 
@@ -37,13 +41,15 @@
 
 
 (defnp member 
-  "Given a tree-puzzle and a vector of tree-puzzles, returns true if there is a puzzle 
-  there is a TreePuzzle whose puzzle has the same tile formation as the tiles of the puzzle of
-  the TreePuzzle that was passed in"
+  "Given a tree-puzzle and a vector of tree-puzzles, returns a vector containing
+  an updated vector of tree-puzzles and a boolean. The boolean indicates whether
+  or not the tpuzzle should be inserted into the vector of tree-puzzles."
     [tpuzzle plist]
     (let [puzzle (:puzzle tpuzzle) score (:h tpuzzle)]
     (loop [puzzles plist searched []]
       (if (= puzzles [])
+        ; If the puzzle has never been visited before, return the vector as is
+        ; and insert the puzzle into the list. 
         [plist true]
         (let [initial (puzzles 0) 
               others (vec (rest puzzles))
@@ -51,7 +57,11 @@
               score2 (:h initial)]
         (if (= puzzle puzzle2)
            (if (< score score2)
-             [(vec (concat searched others))  true]
+             ; If there is an identical puzzle (not TreePuzzle) present in the 
+             ; vector that has a higher associated cost, the corresponding 
+             ; TreePuzzle is removed and tpuzzle should be inserted.
+             [(vec (concat searched others)) true]
+             ; 
              [plist false])
            (recur others (conj searched initial))
 

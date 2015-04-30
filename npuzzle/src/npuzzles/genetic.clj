@@ -9,12 +9,18 @@
 ; POPULATION: a vector of chromosomes
 ; FITNESS: the score that fitness returns for a chromosome relative to a given
 ; puzzle. Lower score => more fit
+; COST: the length of a solution (number of slides)
 ;
 ; A chromosome is a list of floating point numbers that must be interpreted
 ; in the context of a particular puzzle because the list of valid moves 
 ; changes relative to the state of the puzzle. Thus, given a particular
 ; state with an associated list of valid moves, each gene represents which
-; of those moves to take. 
+; of those moves to take. For example, if a given puzzle state has two valid 
+; moves (:up, :down), then a gene in [0.0, 0.5) would represent up and 
+; a gene in [0.5 , 1.0) would represent down. The genetic algorithm prevents 
+; immediate backtracking (sliding the puzzle left right after sliding right),
+; so any puzzle state has either 1 (empty square in corner), 2 (empty square
+; on the edge) and 3 (empty square in the middle) valid moves.
 
 (ns npuzzles.genetic
 	(:use [npuzzles.puzzle])
@@ -23,11 +29,36 @@
     (:require [taoensso.timbre.profiling :as profiling
            :refer (pspy pspy* profile defnp p p*)]))
 
+; Record type for specifying genetic algorithm parameters;
+;
+; Fields:
+; H-WEIGHT: a ratio type in [0, 1] representing the relative weighting of the
+; heuristic function in determining the fitness of a solution.
+; C-WEIGHT: a ratio in [0, 1] representing the relative weighting of the
+; cost in determining the fitness of a solution. 
+; NOTE: h-weight + c-weight must equal 1. Solve enforces this invariant using
+; validate-params.
+;
+; CROSS-WEIGHT: a ratio type in [0, 1] representing the relative weighting of
+; crossover when building a new population in run-generation
+; MUT-WEIGHT: a ratio in [0, 1] representing the relative weighting of the
+; mutation when building a new population in run-generation
+; NOTE: cross-weight + height-weight must equal 1. Solve enforces this
+; invariant using validate-params.
+;
+; HEURISTIC: a puzzle -> int function used in fitness evaluation.
+; This function must have a heuristic metadata tag in order for
+; validate-params to consider it a valid heuristic function.
+
 (defrecord GAParams [h-weight c-weight cross-weight mut-weight heuristic])
 
 ; Default parameter values
-(def ^:dynamic params {:h-weight 0.9, :c-weight 0.1, :cross-weight 0.9,
-			           :mut-weight 0.1, :heuristic manhattan-distance})
+(def ^:dynamic params {:h-weight 9/10, :c-weight 1/10, :cross-weight 9/10,
+			           :mut-weight 1/10, :heuristic #'manhattan-distance})
+
+; Make sure that the code will not run if the default params are invalid.
+(declare validate-params)
+(assert (validate-params params))
 
 ;PUBLIC FUNCTIONS
 (declare run-phase)
@@ -39,8 +70,10 @@
 	 solved the chromosome is returned, or Nil if a solution is not found 
 	 within the specified limits"
 	([puzzle pop-size num-phases num-gens new-params]
-	 	(binding [params new-params]
-	 		(solve puzzle pop-size num-phases num-gens)))
+		(if (validate-params new-params)
+		 	(binding [params new-params]
+		 		(solve puzzle pop-size num-phases num-gens)))
+				(throw (Exception. "Invalidate parameters.")))
 	([puzzle pop-size num-phases num-gens]
 		(loop [n num-phases
 		   puz puzzle
@@ -56,6 +89,12 @@
 						(recur (- n 1) new-puzzle new-solution)))))))
 
 ; PRIVATE FUNCTIONS
+(defn validate-params
+	"Makes sure that the weights for the mutations/crossover and the
+	fitness/cost each sum up to 1 and that the heuristic function is valid"
+	[{h-w :h-weight c-w :c-weight cross-w :cross-weight mut-w :mut-weight heur :heuristic}]
+	(and (= (+ h-w c-w) 1) (= (+ cross-w mut-w) 1) (:heuristic (meta heur))))
+
 (defn- opposite-dir
 	"Given a direction, returns the opposite direction 
 	returns nil if an invalid direction keyword is passed in"
