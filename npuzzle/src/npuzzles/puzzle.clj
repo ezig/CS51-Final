@@ -1,7 +1,8 @@
 (ns npuzzles.puzzle
 	(:require clojure.core.memoize)
     (:require [taoensso.timbre.profiling :as profiling
-       :refer (pspy pspy* profile defnp p p*)]))
+       :refer (pspy pspy* profile defnp p p*)])
+    (:require [clojure.math.numeric-tower :as math]))
 (alias 'memo 'clojure.core.memoize)
 
 ; Puzzle record has integer number of rows, columsns
@@ -112,6 +113,23 @@
 					(recur tl (+ indx 1) (+ 1 misplaced)))))))
 
 (def misplaced-tiles (memo/memo misplaced-tiles-helper))
+
+(defn euclidean-distance 
+	[{rows :rows cols :cols tiles :tiles :as puzzle}]
+	(loop [d 0 lst tiles]
+		(if (empty? lst) 
+			d
+			(let [hd (first lst) tl (rest lst)
+ 	     		  final_index (mod (- hd 1) (* rows cols))
+	 	     	  final_row (quot final_index cols)
+	 	     	  final_col (mod final_index cols)
+				  column (col-of-tile puzzle hd)
+				  row (row-of-tile puzzle hd)
+				  xd (- final_row row)
+				  yd (- final_col column)]
+		    (if (= hd 0) 
+	     		(recur d tl)
+		    	(recur (+ d (math/sqrt (+ (* xd xd) (* yd yd)))) tl))))))
 
 
 (defn dir-between

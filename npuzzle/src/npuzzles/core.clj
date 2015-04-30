@@ -10,21 +10,21 @@
 (defn -main
 	 "I don't do a whole lot ... yet."
  	[& args]
- 	(println "\to==+-- 
+ 	(println "\t   o==+-- 
             |  |\\ \\
             |  | \\ \\     _____________________
-            |   \\ \\ \\   |                   |
-            |    \\ \\ \\  |  +-------------+  |
-            |     \\ \\ \\ |  |      (__)   |  |
-            |      \\ \\ \\|  |      (oo)   |  |
-            |       \\ \\  |  | o\\  .\\/.  |  |
-            |        \\ \\ |  | | \\/  \\   |  |
+            |   \\ \\ \\    |                   |
+            |    \\ \\ \\   |  +-------------+  |
+            |     \\ \\ \\  |  |      (__)   |  |
+            |      \\ \\ \\ |  |      (oo)   |  |
+            |       \\ \\  |  | o\\  .\\/.    |  |
+            |        \\ \\ |  | | \\/  \\     |  |
           /---\\       \\  |  +-------------+  |
          /     \\       \\ |                   |
-         |     |           |                   |
-         \\     /          |                   |
-          \\---/           |                   |
-                           |                   |
+         |     |         |                   |
+         \\     /         |                   |
+          \\---/          |                   |
+                         |                   |
                      ------------------------------
                     (                              )
                      ------------------------------ ")
@@ -32,5 +32,5 @@
   ; (time(dotimes [n 100] (println (genetic/solve (puzzle/gen-puzzle 3) 200 5 500 {:h-weight 0.9, :c-weight 0.1, :cross-weight 0.9,
                  ; :mut-weight 0.1, :heuristic puzzle/misplaced-tiles})))))
   (let [x (puzzle/gen-puzzle 2)]
-    (map (fn [x] (print-str (puzzle/to-string x))) (efficient/solve x))
+    (map (fn [x] (print-str (puzzle/to-string x))) (efficient/solve x puzzle/manhattan-distance))
   ))
