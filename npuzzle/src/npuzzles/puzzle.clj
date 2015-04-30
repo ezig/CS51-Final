@@ -141,10 +141,9 @@
 					(recur tl (+ indx 1) misplaced)
 					(recur tl (+ indx 1) (+ 1 misplaced)))))))
 
-<<<<<<< HEAD
-(def misplaced-tiles (memo/memo misplaced-tiles-helper))
+(def ^:heuristic misplaced-tiles (memo/memo misplaced-tiles-helper))
 
-(defn euclidean-distance 
+(defn euclidean-distance-helper
 	[{rows :rows cols :cols tiles :tiles :as puzzle}]
 	(loop [d 0 lst tiles]
 		(if (empty? lst) 
@@ -161,10 +160,8 @@
 	     		(recur d tl)
 		    	(recur (+ d (math/sqrt (+ (* xd xd) (* yd yd)))) tl))))))
 
-=======
-;Memoized version of misplace-tiles-helper
-(def ^:heuristic misplaced-tiles (memo/memo misplaced-tiles-helper))
->>>>>>> 8456cd6e9c5ce62abda04a5b1aa6fb04bcefea5b
+(def ^:heuristic euclidean-distance (memo/memo euclidean-distance-helper))
+
 
 (defn dir-between
 	"Given two puzzles, determines the direction to slide from puzzle1
