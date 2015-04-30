@@ -99,19 +99,22 @@
             		(recur (+ d (+ (abs (- row final_row)) (abs (- column final_col))))
             			tl))))))
 
-(def manhattan-distance (memo/memo manhattan-distance-helper))
+;Memoized version of manhattan-distance-helper
+(def ^:heuristic manhattan-distance (memo/memo manhattan-distance-helper))
 
 (defn misplaced-tiles-helper
 	[{tiles :tiles}]
+	"Calculates the number of tiles that are in the , ignoring the zero tile"
 	(loop [tiles tiles indx 1 misplaced 0]
-		(let [hd (get tiles 0) tl (into [] (rest tiles))]
-			(if (nil? hd)
-				misplaced
+		(if (empty? tiles)
+			misplaced
+			(let [hd (tiles 0) tl (into [] (rest tiles))]
 				(if (or (= hd indx) (= hd 0))
 					(recur tl (+ indx 1) misplaced)
 					(recur tl (+ indx 1) (+ 1 misplaced)))))))
 
-(def misplaced-tiles (memo/memo misplaced-tiles-helper))
+;Memoized version of misplace-tiles-helper
+(def ^:heuristic misplaced-tiles (memo/memo misplaced-tiles-helper))
 
 
 (defn dir-between
