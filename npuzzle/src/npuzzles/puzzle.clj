@@ -100,7 +100,7 @@
             			tl))))))
 
 ;Memoized version of manhattan-distance-helper
-(def ^:heuristic manhattan-distance (memo/memo manhattan-distance-helper))
+(def manhattan-distance ^:heuristic (memo/memo manhattan-distance-helper))
 
 (defn misplaced-tiles-helper
 	[{tiles :tiles}]
@@ -114,7 +114,7 @@
 					(recur tl (+ indx 1) (+ 1 misplaced)))))))
 
 ;Memoized version of misplace-tiles-helper
-(def ^:heuristic misplaced-tiles (memo/memo misplaced-tiles-helper))
+(def misplaced-tiles ^:heuristic (memo/memo misplaced-tiles-helper))
 
 
 (defn dir-between

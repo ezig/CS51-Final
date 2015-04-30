@@ -26,12 +26,13 @@
 (defrecord GAParams [h-weight c-weight cross-weight mut-weight heuristic])
 
 ; Default parameter values
-(def ^:dynamic params {:h-weight 0.9, :c-weight 0.1, :cross-weight 0.9,
-			           :mut-weight 0.1, :heuristic manhattan-distance})
+(def ^:dynamic params {:h-weight 9/10, :c-weight 1/10, :cross-weight 9/10,
+			           :mut-weight 1/10, :heuristic #'manhattan-distance})
 
 ;PUBLIC FUNCTIONS
 (declare run-phase)
 (declare interpret-chromosome)
+(declare validate-params)
 (defn solve
 	"Given a puzzle, an initial population size, and specified numbers of
 	 generations and phases, runs the genetic algorithm
@@ -39,8 +40,10 @@
 	 solved the chromosome is returned, or Nil if a solution is not found 
 	 within the specified limits"
 	([puzzle pop-size num-phases num-gens new-params]
-	 	(binding [params new-params]
-	 		(solve puzzle pop-size num-phases num-gens)))
+		(if (validate-params new-params)
+		 	(binding [params new-params]
+		 		(solve puzzle pop-size num-phases num-gens)))
+				(throw (Exception. "Invalidate parameters.")))
 	([puzzle pop-size num-phases num-gens]
 		(loop [n num-phases
 		   puz puzzle
@@ -56,6 +59,12 @@
 						(recur (- n 1) new-puzzle new-solution)))))))
 
 ; PRIVATE FUNCTIONS
+(defn validate-params
+	"Makes sure that the weights for the mutations/crossover and the
+	fitness/cost each sum up to 1 and that the heuristic function is valid"
+	[{h-w :h-weight c-w :c-weight cross-w :cross-weight mut-w :mut-weight heur :heuristic}]
+	(and (= (+ h-w c-w) 1) (= (+ cross-w mut-w) 1) (:heuristic (meta heur))))
+
 (defn- opposite-dir
 	"Given a direction, returns the opposite direction 
 	returns nil if an invalid direction keyword is passed in"
