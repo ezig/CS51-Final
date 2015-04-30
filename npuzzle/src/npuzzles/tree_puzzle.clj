@@ -30,7 +30,7 @@
   by retracing the path back to the starting node (through the Parent nodes of each
     TreePuzzle until you reach the node with the nil parent)."
   [tpuzzle]
-  (loop [puz tpuzzle plist ()]
-      (if (nil? puz)
-          plist
-          (recur (:parent puz) (cons (:puzzle puz) plist)))))
+  (loop [puz tpuzzle dlist ()]
+      (if (nil? (:parent puz))
+          dlist
+          (recur (:parent puz) (cons (dir-between (:puzzle (:parent puz)) (:puzzle puz)) dlist)))))
