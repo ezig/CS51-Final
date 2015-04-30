@@ -59,10 +59,11 @@
 		height (read-string height) 
 		width (read-string width)]
 		(cond (re-matches #"(?i)astar" type) 
-			(do(loop [cnt trials]
-				(let [x (puzzle/gen-puzzle height width)]
-					(map (fn [x] (print-str (puzzle/to-string x))) (efficient/solve x))
-				(recur (- cnt 1)))))
+			(dotimes [n trials] (efficient/solve (puzzle/gen-puzzle height width) heuristic))
+			;(do(loop [cnt trials]
+			;	(let [x (puzzle/gen-puzzle height width)]
+			;		(map (fn [x] (print-str (puzzle/to-string x))) (efficient/solve x))
+			;	(recur (- cnt 1)))))
 			:else "input format should be main (solver type) (# of trials) (height) (width) then additional parameters"
 			))	
 		)
