@@ -1,7 +1,8 @@
 (ns npuzzles.puzzle
 	(:require clojure.core.memoize)
     (:require [taoensso.timbre.profiling :as profiling
-       :refer (pspy pspy* profile defnp p p*)]))
+       :refer (pspy pspy* profile defnp p p*)])
+    (:require [clojure.math.numeric-tower :as math]))
 (alias 'memo 'clojure.core.memoize)
 
 ; Puzzle record has integer number of rows, columsns
@@ -140,6 +141,29 @@
 					(recur tl (+ indx 1) misplaced)
 					(recur tl (+ indx 1) (+ 1 misplaced)))))))
 
+;Memoized version of misplace-tiles-helper
+(def ^:heuristic misplaced-tiles (memo/memo misplaced-tiles-helper))
+
+(defn euclidean-distance-helper
+	[{rows :rows cols :cols tiles :tiles :as puzzle}]
+	(loop [d 0 lst tiles]
+		(if (empty? lst) 
+			d
+			(let [hd (first lst) tl (rest lst)
+ 	     		  final_index (mod (- hd 1) (* rows cols))
+	 	     	  final_row (quot final_index cols)
+	 	     	  final_col (mod final_index cols)
+				  column (col-of-tile puzzle hd)
+				  row (row-of-tile puzzle hd)
+				  xd (- final_row row)
+				  yd (- final_col column)]
+		    (if (= hd 0) 
+	     		(recur d tl)
+		    	(recur (+ d (math/sqrt (+ (* xd xd) (* yd yd)))) tl))))))
+
+(def ^:heuristic euclidean-distance (memo/memo euclidean-distance-helper))
+
+
 (declare inversions)
 (defn solvable?
 	"Returns true if a given puzzle is solvable, false otherwise"
@@ -155,9 +179,6 @@
 	  			(even? cols)
 	  			(odd? rows)
 	  			(even? (+ (row-of-tile puzzle 0) (inversions puzzle)))))))
-
-;Memoized version of misplace-tiles-helper
-(def ^:heuristic misplaced-tiles (memo/memo misplaced-tiles-helper))
 
 (defn dir-between
 	"Given two puzzles, determines the direction to slide from puzzle1
