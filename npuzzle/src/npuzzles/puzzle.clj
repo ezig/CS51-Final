@@ -125,7 +125,7 @@
 				  row_tl_idx (+ (* cnt cols) cols)
 				  current_row (subvec idx_vec row_hd_idx row_tl_idx)
 				  c_row_belongs (filter #(and(>= % row_hd_idx) (< % row_tl_idx)) current_row)]
-				  (recur (+ d (* inversions-vector 2)) (dec cnt) (idx_vec)))))))
+				  (recur (+ d (* (inversions-vector c_row_belongs) 2)) (dec cnt) (idx_vec)))))))
 
 (defn misplaced-tiles-helper
 	[{tiles :tiles}]
