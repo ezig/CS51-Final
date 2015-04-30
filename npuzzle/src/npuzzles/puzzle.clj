@@ -140,6 +140,22 @@
 					(recur tl (+ indx 1) misplaced)
 					(recur tl (+ indx 1) (+ 1 misplaced)))))))
 
+(declare inversions)
+(defn solvable?
+	"Returns true if a given puzzle is solvable, false otherwise"
+	[{rows :rows cols :cols :as puzzle}]
+	(let [is_odd (odd? (* rows cols))]
+		(or
+	  		(and (odd? cols) (even? (inversions puzzle)))
+	  		(and 
+	  			(even? cols)
+	  			(even? rows)
+	  			(odd? (+ (row-of-tile puzzle 0) (inversions puzzle))))
+	  		(and 
+	  			(even? cols)
+	  			(odd? rows)
+	  			(even? (+ (row-of-tile puzzle 0) (inversions puzzle)))))))
+
 ;Memoized version of misplace-tiles-helper
 (def ^:heuristic misplaced-tiles (memo/memo misplaced-tiles-helper))
 
@@ -213,21 +229,6 @@
 			inv
 			(let [hd (first lst) tl (rest lst)]
 				(recur (+ inv (count (filter #(< % hd) tl))) tl)))))
-
-(defn- solvable?
-	"Returns true if a given puzzle is solvable, false otherwise"
-	[{rows :rows cols :cols :as puzzle}]
-	(let [is_odd (odd? (* rows cols))]
-		(or
-	  		(and (odd? cols) (even? (inversions puzzle)))
-	  		(and 
-	  			(even? cols)
-	  			(even? rows)
-	  			(odd? (+ (row-of-tile puzzle 0) (inversions puzzle))))
-	  		(and 
-	  			(even? cols)
-	  			(odd? rows)
-	  			(even? (+ (row-of-tile puzzle 0) (inversions puzzle)))))))
 
 (defn- random-puzzle
 	"Given a number of rows and columns, creates random puzzle
