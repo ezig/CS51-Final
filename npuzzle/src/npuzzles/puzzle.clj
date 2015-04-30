@@ -80,7 +80,7 @@
 (declare abs)
 (declare col-of-tile)
 (declare row-of-tile)
-(defn manhattan-distance-helper
+(defn- manhattan-distance-helper
 	"Given a Puzzle, calculates its fitness using the Manhattan Distance 
 	 heuristic function"
 	[{cols :cols rows :rows tiles :tiles :as puzzle}]
@@ -100,10 +100,10 @@
             			tl))))))
 
 ;Memoized version of manhattan-distance-helper
-(def manhattan-distance ^:heuristic (memo/memo manhattan-distance-helper))
+(def ^:heuristic manhattan-distance (memo/memo manhattan-distance-helper))
 
 
-(defn inversions-vector
+(defn- inversions-vector
 	"Given a vector, returns the number of inversions"
 	[lst]
 	(loop [inv 0 lst lst]
@@ -112,12 +112,12 @@
 			(let [hd (first lst) tl (rest lst)]
 				(recur (+ inv (count (filter #(< % hd) tl))) tl)))))
 
-(defn linear-conflict
+(defn- linear-conflict-helper
 	"Given a Puzzle, calculates the amount of linear conflict in the puzzle
-	allowing for more accurate fittness when added to Manhattan Distance"
+	allowing for more accurate fitness when added to Manhattan Distance"
 	[{cols :cols rows :rows tiles :tiles :as puzzle}]
 	(let [lst tiles
-		  goal_index_vec (map #(mod (- % 1)) (* rows cols) lst)]
+		  goal_index_vec (into [] (map #(mod (- % 1)) (* rows cols) lst))]
 		(loop [d 0 cnt rows idx_vec goal_index_vec]
 			(if (zero? cnt)
 			d
@@ -125,7 +125,9 @@
 				  row_tl_idx (+ (* cnt cols) cols)
 				  current_row (subvec idx_vec row_hd_idx row_tl_idx)
 				  c_row_belongs (filter #(and(>= % row_hd_idx) (< % row_tl_idx)) current_row)]
-				  (recur (+ d (* inversions-vector 2)) (dec cnt) (idx_vec)))))))
+				  (recur (+ d (* (inversions-vector c_row_belongs) 2)) (dec cnt) idx_vec))))))
+
+(def ^:heuristic linear-conflict (memo/memo linear-conflict-helper))
 
 (defn misplaced-tiles-helper
 	[{tiles :tiles}]
@@ -139,7 +141,7 @@
 					(recur tl (+ indx 1) (+ 1 misplaced)))))))
 
 ;Memoized version of misplace-tiles-helper
-(def misplaced-tiles ^:heuristic (memo/memo misplaced-tiles-helper))
+(def ^:heuristic misplaced-tiles (memo/memo misplaced-tiles-helper))
 
 (defn dir-between
 	"Given two puzzles, determines the direction to slide from puzzle1

@@ -6,37 +6,35 @@
 	(:require [clojure.data.priority-map :as pmap])
 	(:gen-class))
 
-(comment
-(defn -main
-	 "I don't do a whole lot ... yet."
- 	[& args]
- 	(println "\to==+-- 
-            |  |\\ \\
-            |  | \\ \\     _____________________
-            |   \\ \\ \\   |                   |
-            |    \\ \\ \\  |  +-------------+  |
-            |     \\ \\ \\ |  |      (__)   |  |
-            |      \\ \\ \\|  |      (oo)   |  |
-            |       \\ \\  |  | o\\  .\\/.  |  |
-            |        \\ \\ |  | | \\/  \\   |  |
-          /---\\       \\  |  +-------------+  |
-         /     \\       \\ |                   |
-         |     |           |                   |
-         \\     /          |                   |
-          \\---/           |                   |
-                           |                   |
-                     ------------------------------
-                    (                              )
-                     ------------------------------ ")
- 	(println "Under Cow-struction")
-  ; (time (dotimes [n 100] (println (genetic/solve (puzzle/gen-puzzle 3) 200 5 500 {:h-weight 0.9, :c-weight 0.1, :cross-weight 0.9,
-  ;                :mut-weight 0.1, :heuristic puzzle/misplaced-tiles})))))
-))
+; (defn -main
+; 	 "I don't do a whole lot ... yet."
+;  	[& args]
+;  	(println "\to==+-- 
+;             |  |\\ \\
+;             |  | \\ \\     _____________________
+;             |   \\ \\ \\   |                   |
+;             |    \\ \\ \\  |  +-------------+  |
+;             |     \\ \\ \\ |  |      (__)   |  |
+;             |      \\ \\ \\|  |      (oo)   |  |
+;             |       \\ \\  |  | o\\  .\\/.  |  |
+;             |        \\ \\ |  | | \\/  \\   |  |
+;           /---\\       \\  |  +-------------+  |
+;          /     \\       \\ |                   |
+;          |     |           |                   |
+;          \\     /          |                   |
+;           \\---/           |                   |
+;                            |                   |
+;                      ------------------------------
+;                     (                              )
+;                      ------------------------------ ")
+;  	(println "Under Cow-struction")
+;   (time (dotimes [n 100] (println (genetic/solve (puzzle/gen-puzzle 2) 10 2 10 
+;     {:h-weight 9/10, :c-weight 1/10, :cross-weight 9/10,:mut-weight 1/10, :heuristic #'puzzle/misplaced-tiles})))))
 
 (defn -main
 	"commandline interaction with our program"
 	;genetic arity arguments and body
-	([type trials height width popsize num-phases num-gens new-params]
+	([type trials height width popsize num-phases num-gens & new-params]
 	(let [trials (read-string trials) 
 		height (read-string height) 
 		width (read-string width)
