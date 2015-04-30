@@ -48,10 +48,11 @@
 		new-params (read-string new-params)]
 		(cond 
 			(re-matches #"(?i)genetic" type) 
-			(do (loop [cnt trials]
-				(let [x (puzzle/gen-puzzle height width)]
-					(map (fn [x] (print-str (puzzle/to-string x))) (genetic/solve x))
-				(recur (- cnt 1)))))
+			(dotimes [n trials] (genetic/solve (puzzle/gen-puzzle height width) popsize num-phases num-gens new-params)
+			;(do (loop [cnt trials]
+			;	(let [x (puzzle/gen-puzzle height width)]
+			;		(map (fn [x] (print-str (puzzle/to-string x))) (genetic/solve x))
+			;	(recur (- cnt 1)))))
 			:else "input format should be main (solver type) (# of trials)"
 			))
 	;astar arity arguments and body
