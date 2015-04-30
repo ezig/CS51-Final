@@ -37,21 +37,32 @@
   )))
 (defn -main
 	"commandline interaction with our program"
-	[type trials height width]
+	[type trials height width popsize num-phases num-gens new-params]
 	(let [trials (read-string trials) 
 		height (read-string height) 
-		width (read-string width)]
+		width (read-string width)
+		popsize (read-string popsize)
+		num-phases (read-string num-phases)
+		num-gens (read-string num-gens)
+		new-params (read-string new-params)]
 		(cond 
 			(re-matches #"(?i)genetic" type) 
 			(do (loop [cnt trials]
 				(let [x (puzzle/gen-puzzle height width)]
 					(map (fn [x] (print-str (puzzle/to-string x))) (genetic/solve x))
 				(recur (- cnt 1)))))
-			(re-matches #"(?i)astar" type) 
+			:else "input format should be main (solver type) (# of trials)"
+			))
+	[type trials height width heuristic]
+	(let [trials (read-string trials) 
+		height (read-string height) 
+		width (read-string width)]
+		(cond (re-matches #"(?i)astar" type) 
 			(do(loop [cnt trials]
 				(let [x (puzzle/gen-puzzle height width)]
 					(map (fn [x] (print-str (puzzle/to-string x))) (efficient/solve x))
 				(recur (- cnt 1)))))
-			:else "input format should be main (solver type) (# of trials)"
-			))
+			:else "input format should be main (solver type) (# of trials) (height) (width) then additional parameters"
+			))	
+		)
 	)
