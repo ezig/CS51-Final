@@ -9,12 +9,18 @@
 ; POPULATION: a vector of chromosomes
 ; FITNESS: the score that fitness returns for a chromosome relative to a given
 ; puzzle. Lower score => more fit
+; COST: the length of a solution (number of slides)
 ;
 ; A chromosome is a list of floating point numbers that must be interpreted
 ; in the context of a particular puzzle because the list of valid moves 
 ; changes relative to the state of the puzzle. Thus, given a particular
 ; state with an associated list of valid moves, each gene represents which
-; of those moves to take. 
+; of those moves to take. For example, if a given puzzle state has two valid 
+; moves (:up, :down), then a gene in [0.0, 0.5) would represent up and 
+; a gene in [0.5 , 1.0) would represent down. The genetic algorithm prevents 
+; immediate backtracking (sliding the puzzle left right after sliding right),
+; so any puzzle state has either 1 (empty square in corner), 2 (empty square
+; on the edge) and 3 (empty square in the middle) valid moves.
 
 (ns npuzzles.genetic
 	(:use [npuzzles.puzzle])
@@ -23,16 +29,40 @@
     (:require [taoensso.timbre.profiling :as profiling
            :refer (pspy pspy* profile defnp p p*)]))
 
+; Record type for specifying genetic algorithm parameters;
+;
+; Fields:
+; H-WEIGHT: a ratio type in [0, 1] representing the relative weighting of the
+; heuristic function in determining the fitness of a solution.
+; C-WEIGHT: a ratio in [0, 1] representing the relative weighting of the
+; cost in determining the fitness of a solution. 
+; NOTE: h-weight + c-weight must equal 1. Solve enforces this invariant using
+; validate-params.
+;
+; CROSS-WEIGHT: a ratio type in [0, 1] representing the relative weighting of
+; crossover when building a new population in run-generation
+; MUT-WEIGHT: a ratio in [0, 1] representing the relative weighting of the
+; mutation when building a new population in run-generation
+; NOTE: cross-weight + height-weight must equal 1. Solve enforces this
+; invariant using validate-params.
+;
+; HEURISTIC: a puzzle -> int function used in fitness evaluation.
+; This function must have a heuristic metadata tag in order for
+; validate-params to consider it a valid heuristic function.
+
 (defrecord GAParams [h-weight c-weight cross-weight mut-weight heuristic])
 
 ; Default parameter values
 (def ^:dynamic params {:h-weight 9/10, :c-weight 1/10, :cross-weight 9/10,
 			           :mut-weight 1/10, :heuristic #'manhattan-distance})
 
+; Make sure that the code will not run if the default params are invalid.
+(declare validate-params)
+(assert (validate-params params))
+
 ;PUBLIC FUNCTIONS
 (declare run-phase)
 (declare interpret-chromosome)
-(declare validate-params)
 (defn solve
 	"Given a puzzle, an initial population size, and specified numbers of
 	 generations and phases, runs the genetic algorithm
