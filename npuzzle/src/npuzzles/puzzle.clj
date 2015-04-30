@@ -81,7 +81,7 @@
 (declare abs)
 (declare col-of-tile)
 (declare row-of-tile)
-(defn manhattan-distance-helper
+(defn- manhattan-distance-helper
 	"Given a Puzzle, calculates its fitness using the Manhattan Distance 
 	 heuristic function"
 	[{cols :cols rows :rows tiles :tiles :as puzzle}]
@@ -100,18 +100,48 @@
             		(recur (+ d (+ (abs (- row final_row)) (abs (- column final_col))))
             			tl))))))
 
-(def manhattan-distance (memo/memo manhattan-distance-helper))
+;Memoized version of manhattan-distance-helper
+(def ^:heuristic manhattan-distance (memo/memo manhattan-distance-helper))
+
+
+(defn- inversions-vector
+	"Given a vector, returns the number of inversions"
+	[lst]
+	(loop [inv 0 lst lst]
+		(if (empty? lst)
+			inv
+			(let [hd (first lst) tl (rest lst)]
+				(recur (+ inv (count (filter #(< % hd) tl))) tl)))))
+
+(defn- linear-conflict-helper
+	"Given a Puzzle, calculates the amount of linear conflict in the puzzle
+	allowing for more accurate fitness when added to Manhattan Distance"
+	[{cols :cols rows :rows tiles :tiles :as puzzle}]
+	(let [lst tiles
+		  goal_index_vec (into [] (map #(mod (- % 1)) (* rows cols) lst))]
+		(loop [d 0 cnt rows idx_vec goal_index_vec]
+			(if (zero? cnt)
+			d
+			(let [row_hd_idx (* cnt cols)
+				  row_tl_idx (+ (* cnt cols) cols)
+				  current_row (subvec idx_vec row_hd_idx row_tl_idx)
+				  c_row_belongs (filter #(and(>= % row_hd_idx) (< % row_tl_idx)) current_row)]
+				  (recur (+ d (* (inversions-vector c_row_belongs) 2)) (dec cnt) idx_vec))))))
+
+(def ^:heuristic linear-conflict (memo/memo linear-conflict-helper))
 
 (defn misplaced-tiles-helper
 	[{tiles :tiles}]
+	"Calculates the number of tiles that are in the , ignoring the zero tile"
 	(loop [tiles tiles indx 1 misplaced 0]
-		(let [hd (get tiles 0) tl (into [] (rest tiles))]
-			(if (nil? hd)
-				misplaced
+		(if (empty? tiles)
+			misplaced
+			(let [hd (tiles 0) tl (into [] (rest tiles))]
 				(if (or (= hd indx) (= hd 0))
 					(recur tl (+ indx 1) misplaced)
 					(recur tl (+ indx 1) (+ 1 misplaced)))))))
 
+<<<<<<< HEAD
 (def misplaced-tiles (memo/memo misplaced-tiles-helper))
 
 (defn euclidean-distance 
@@ -131,6 +161,10 @@
 	     		(recur d tl)
 		    	(recur (+ d (math/sqrt (+ (* xd xd) (* yd yd)))) tl))))))
 
+=======
+;Memoized version of misplace-tiles-helper
+(def ^:heuristic misplaced-tiles (memo/memo misplaced-tiles-helper))
+>>>>>>> 8456cd6e9c5ce62abda04a5b1aa6fb04bcefea5b
 
 (defn dir-between
 	"Given two puzzles, determines the direction to slide from puzzle1

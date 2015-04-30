@@ -4,18 +4,25 @@
   (:require [clojure.data.priority-map :as pmap])
   (:require [taoensso.timbre.profiling :as profiling :refer (pspy pspy* profile defnp p p*)]))
   
-
-; Here we improve apon the naive implementation on the A* best-first search algorithm
-; by altering the datastructures that we implement the open and closed sets as. 
+(comment
+Here we improve apon the naive implementation on the A* best-first search algorithm
+by harnessing the power of Clojure's built-in map datatypes (hash-map and 
+priority map). This resulted in a fifty times performance improvement. 
+)
 
 (defn- queue-sort 
+  "Used to sort priority queues. Lowest cost comes first, if there is a tie
+  breaker we compare the integer representation of a puzzle (e.g. [0 1 2 3] = 
+  0123), which is guaranteed to be unique in the open set 
+  (no duplicate puzzles)."
   [val1 val2] 
   (if (= (:h val1) (:h val2)) 
+    ; We add a 1 to the front of each number since Clojure treats 0123 as an 
+    ; octal.
     (< (read-string (clojure.string/join (cons 1 (:tiles (:puzzle val1)))))
        (read-string (clojure.string/join (cons 1 (:tiles (:puzzle val2))))))
     (< (:h val1) (:h val2))))
   
-
 ;Public Functions
 (defn init-queue 
   "Given a puzzle, returns a Priority Queue with one element: a
@@ -47,6 +54,10 @@
 		(let [puzzle (puzzles 0) newpuzzles (vec (rest puzzles))
          tiles (:tiles puzzle) in-closed (get visited tiles)
          in-open (get open tiles)]
+    ; in-open and in-closed contain the cost value (h) of the identical puzzle 
+    ; stored in the open and closed sets if such a puzzle exists (else nil).
+    ; This is used to determine if we should bother visiting the child node at 
+    ; all. 
     (if (and (nil? in-closed) (nil? in-open)) 
       (recur newpuzzles (insert-queue puzzle newqueue) visited)
       (if (and in-closed in-open)
@@ -81,7 +92,5 @@
   "Given a initial puzzle state, returns the sequence of puzzles needed to go from that 
   puzzle state to the goal state."
   [puzzle heuristic] 
-   ;(if (solvable? puzzle)
    (map-solution (step (init-queue puzzle heuristic) heuristic)))
-   ;(println "Not Solvable")))
 

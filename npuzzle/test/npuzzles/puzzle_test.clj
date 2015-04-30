@@ -130,26 +130,16 @@
 
 (deftest misplaced-tiles-test
 	(testing "misplaced-tiles")
-	(let [p1 (gen-puzzle 3 3 [1 2 3 4 5 6 7 0 8])
-	      p2 (gen-puzzle 3 3 [2 1 3 5 4 6 0 7 8])
-	      p3 (gen-puzzle 3 3 [1 2 3 4 0 5 6 7 8])
-	      p4 (gen-puzzle 4 4 [10 3 5 12 11 13 9 6 15 2 14 8 1 0 7 4])]
-    (is (= (misplaced-tiles p1) 1))
-    (is (= (misplaced-tiles p2) 6))
-    (is (= (misplaced-tiles p3) 4))
-    (is (= (misplaced-tiles p4) 15))))
-
-(deftest n-max-swap-test
-	(testing "n-max-swap")
-	(let [p1 (gen-puzzle 3 3 [1 2 3 4 5 6 7 0 8])
-	      p2 (gen-puzzle 3 3 [2 1 3 5 4 6 0 7 8])
-	      p3 (gen-puzzle 3 3 [1 2 3 4 0 5 6 7 8])
-	      p4 (gen-puzzle 4 4 [10 3 5 12 11 13 9 6 15 2 14 8 1 0 7 4])]
-    (is (= (misplaced-tiles p1) 1))
-    (is (= (misplaced-tiles p2) ))
-    (is (= (misplaced-tiles p3) 4))
-    (is (= (misplaced-tiles p4) 15))))
-
+		(let [p1 (gen-puzzle 3 3 [8 2 0 1 7 3 5 6 4])
+			  p2 (gen-puzzle 3 3 [1 2 3 4 5 6 7 8 0])
+			  p3 (gen-puzzle 2 2 [1 2 3 0])
+			  p4 (gen-puzzle 2 2 [0 1 2 3])
+			  p5 (gen-puzzle 3 4 [3 1 2 4 5 6 9 7 8 10 11 0])]
+			(is (= (misplaced-tiles p1) 7))
+			(is (= (misplaced-tiles p2) 0))
+			(is (= (misplaced-tiles p3) 0))
+			(is (= (misplaced-tiles p4) 3))
+			(is (= (misplaced-tiles p5) 6))))
 
 (deftest solved?-test
 	(testing "solved?")
