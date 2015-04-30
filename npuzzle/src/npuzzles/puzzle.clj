@@ -103,6 +103,27 @@
 ;Memoized version of manhattan-distance-helper
 (def ^:heuristic manhattan-distance (memo/memo manhattan-distance-helper))
 
+(defn tiles-out-of-row-col-helper
+	[{cols :cols rows :rows tiles :tiles :as puzzle}]
+	(loop [d 0 lst tiles]
+	 	(if (empty? lst)
+	 	    d
+	 	    (let [hd (first lst) tl (rest lst)
+ 	     		  final_index (mod (- hd 1) (* rows cols))
+	 	     	  final_row (quot final_index cols)
+	 	     	  final_col (mod final_index cols)
+				  column (col-of-tile puzzle hd)
+				  row (row-of-tile puzzle hd)
+				  out_of_row (not= final_row row) 
+				  out_of_col (not= final_col column)]
+		    (if (and out_of_row out_of_col)
+		    	(recur (+ d 2) tl)
+		    	(if (or out_of_row out_of_col)
+		    		(recur (+ d 1) tl)
+		    	    (recur d tl)))))))
+
+(def ^:heuristic tiles-out-of-row-col (memo/memo tiles-out-of-row-col-helper))
+		  
 
 (defn- inversions-vector
 	"Given a vector, returns the number of inversions"
