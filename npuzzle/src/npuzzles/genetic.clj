@@ -58,7 +58,7 @@
 
 ; Make sure that the code will not run if the default params are invalid.
 (declare validate-params)
-(assert (validate-params params))
+(assert '(validate-params params))
 
 ;PUBLIC FUNCTIONS
 (declare run-phase)
@@ -89,7 +89,7 @@
 						(recur (- n 1) new-puzzle new-solution)))))))
 
 ; PRIVATE FUNCTIONS
-(defn validate-params
+(defn- validate-params
 	"Makes sure that the weights for the mutations/crossover and the
 	fitness/cost each sum up to 1 and that the heuristic function is valid"
 	[{h-w :h-weight c-w :c-weight cross-w :cross-weight mut-w :mut-weight heur :heuristic}]
