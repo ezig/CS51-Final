@@ -102,6 +102,31 @@
 ;Memoized version of manhattan-distance-helper
 (def manhattan-distance ^:heuristic (memo/memo manhattan-distance-helper))
 
+
+(defn inversions-vector
+	"Given a vector, returns the number of inversions"
+	[lst]
+	(loop [inv 0 lst lst]
+		(if (empty? lst)
+			inv
+			(let [hd (first lst) tl (rest lst)]
+				(recur (+ inv (count (filter #(< % hd) tl))) tl)))))
+
+(defn linear-conflict
+	"Given a Puzzle, calculates the amount of linear conflict in the puzzle
+	allowing for more accurate fittness when added to Manhattan Distance"
+	[{cols :cols rows :rows tiles :tiles :as puzzle}]
+	(let [lst tiles
+		  goal_index_vec (map #(mod (- % 1)) (* rows cols) lst)]
+		(loop [d 0 cnt rows idx_vec goal_index_vec]
+			(if (zero? cnt)
+			d
+			(let [row_hd_idx (* cnt cols)
+				  row_tl_idx (+ (* cnt cols) cols)
+				  current_row (subvec idx_vec row_hd_idx row_tl_idx)
+				  c_row_belongs (filter #(and(>= % row_hd_idx) (< % row_tl_idx)) current_row)]
+				  (recur (+ d (* inversions-vector 2)) (dec cnt) (idx_vec)))))))
+
 (defn misplaced-tiles-helper
 	[{tiles :tiles}]
 	"Calculates the number of tiles that are in the , ignoring the zero tile"
@@ -115,7 +140,6 @@
 
 ;Memoized version of misplace-tiles-helper
 (def misplaced-tiles ^:heuristic (memo/memo misplaced-tiles-helper))
-
 
 (defn dir-between
 	"Given two puzzles, determines the direction to slide from puzzle1
