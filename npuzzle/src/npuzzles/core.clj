@@ -35,20 +35,23 @@
   (let [x (puzzle/gen-puzzle 2)]
     (map (fn [x] (print-str (puzzle/to-string x))) (efficient/solve x))
   )))
-(defn main
+(defn -main
 	"commandline interaction with our program"
 	[type trials height width]
-	(cond 
-		(re-matches #"(?i)genetic" type) 
-		(do (loop [cnt trials]
-			(let [x (puzzle/gen-puzzle height width)]
-				(map (fn [x] (print-str (puzzle/to-string x))) (genetic/solve x))
-			(recur (- cnt 1)))))
-		(re-matches #"(?i)astar" type) 
-		(do(loop [cnt trials]
-			(let [x (puzzle/gen-puzzle height width)]
-				(map (fn [x] (print-str (puzzle/to-string x))) (efficient/solve x))
-			(recur (- cnt 1)))))
-		:else "input format should be main (solver type) (# of trials)"
-		)
+	(let [trials (read-string trials) 
+		height (read-string height) 
+		width (read-string width)]
+		(cond 
+			(re-matches #"(?i)genetic" type) 
+			(do (loop [cnt trials]
+				(let [x (puzzle/gen-puzzle height width)]
+					(map (fn [x] (print-str (puzzle/to-string x))) (genetic/solve x))
+				(recur (- cnt 1)))))
+			(re-matches #"(?i)astar" type) 
+			(do(loop [cnt trials]
+				(let [x (puzzle/gen-puzzle height width)]
+					(map (fn [x] (print-str (puzzle/to-string x))) (efficient/solve x))
+				(recur (- cnt 1)))))
+			:else "input format should be main (solver type) (# of trials)"
+			))
 	)
