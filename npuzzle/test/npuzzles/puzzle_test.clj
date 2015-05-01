@@ -129,6 +129,7 @@
 
 (deftest linear-conflict-test
 	(testing "linear-conflict-helper")
+	(def linear-conflict-helper #'puzzle/linear-conflict-helper)
 	(let [p1 (gen-puzzle 3 3 [1 2 3 4 5 6 7 0 8])
     	  p2 (gen-puzzle 4 4 [15 1 2 3 4 5 6 7 8 9 10 11 0 13 14 12])
     	  p3 (gen-puzzle 3 3 [2 1 3 5 4 0 6 7 8])
@@ -139,11 +140,8 @@
     	(is (= (linear-conflict-helper p2) 4))
     	(is (= (linear-conflict-helper p3) 4))    			
     	(is (= (linear-conflict-helper p4) 0))
-    	(is (= (linear-conflict-helper p5) 0))
-    	(is (= (linear-conflict-helper p6) 42))
-    	(is (= (linear-conflict-helper p6) 12))
-		])
-	)
+    	(is (= (linear-conflict-helper p5) 42))
+    	(is (= (linear-conflict-helper p6) 12))))
 
 (deftest misplaced-tiles-test
 	(testing "misplaced-tiles")
