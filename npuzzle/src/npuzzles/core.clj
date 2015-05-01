@@ -6,30 +6,7 @@
 	(:require [clojure.data.priority-map :as pmap])
     (:require [clojure.tools.cli :refer [cli]])
 	(:gen-class))
-; (defn -main
-; 	 "I don't do a whole lot ... yet."
-;  	[& args]
-;  	(println "\to==+-- 
-;             |  |\\ \\
-;             |  | \\ \\     _____________________
-;             |   \\ \\ \\   |                   |
-;             |    \\ \\ \\  |  +-------------+  |
-;             |     \\ \\ \\ |  |      (__)   |  |
-;             |      \\ \\ \\|  |      (oo)   |  |
-;             |       \\ \\  |  | o\\  .\\/.  |  |
-;             |        \\ \\ |  | | \\/  \\   |  |
-;           /---\\       \\  |  +-------------+  |
-;          /     \\       \\ |                   |
-;          |     |           |                   |
-;          \\     /          |                   |
-;           \\---/           |                   |
-;                            |                   |
-;                      ------------------------------
-;                     (                              )
-;                      ------------------------------ ")
-;  	(println "Under Cow-struction")
-  ; (time (dotimes [n 100] (println (efficient/solve (puzzle/gen-puzzle 3 4) puzzle/manhattan-distance))))
-;  ;   {:h-weight 9/10, :c-weight 1/10, :cross-weight 9/10,:mut-weight 1/10, :heuristic #'puzzle/misplaced-tiles})))))
+
 (def required-opts #{:alg})
 
 (defn missing-required?
@@ -40,15 +17,15 @@
 (defn time-tests
     ""
     [trials fun args]
-    (println fun)
     (time 
         (loop [n trials
                successes 0]
             (if (zero? n)
                 (str "Accuracy: " successes "/" trials)
-                (if (apply fun args)
-                    (recur (dec n) (inc successes))
-                    (recur (dec n) successes))))))
+                (let [puz (puzzle/gen-puzzle (args 0) (args 1))]
+                    (if (apply fun (conj (drop 2 args) puz))
+                        (recur (dec n) (inc successes))
+                        (recur (dec n) successes)))))))
 
 (defn -main [& args]
     (let [[opts args banner] 
@@ -71,7 +48,7 @@
                             (if (or (nil? heuristic) (not (:heuristic (meta heuristic))))
                                 (println "Invalid heuristic function.")
                                 (println
-                                  (time-tests trials 'efficient/solve [(puzzle/gen-puzzle rows cols) heuristic]))))                            
+                                  (time-tests trials (resolve 'npuzzles.astar_efficient/solve) [rows cols heuristic]))))                            
                         (catch Exception e (println "Invalid input."))))
                 (if (= "genetic" (:alg opts))
                         (if (not (= (count args) 7))
@@ -87,7 +64,7 @@
                                 (if (or (nil? heuristic) (not (:heuristic (meta heuristic))))
                                     (println "Invalid heuristic function.")
                                     (println
-                                      (time-tests trials (resolve 'npuzzles.genetic/solve) [(puzzle/gen-puzzle rows cols) pop-size phases gens heuristic]))))                           
+                                      (time-tests trials (resolve 'npuzzles.genetic/solve) [rows cols pop-size phases gens heuristic]))))                           
                                 (catch Exception e (println "Invalid input."))))
                         (println "Invalid algorithm choice"))))
         (when-not (:data opts)
