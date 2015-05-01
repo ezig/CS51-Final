@@ -1,7 +1,7 @@
 (ns npuzzles.core
 	(:require [npuzzles.puzzle :as puzzle])
 	(:require [npuzzles.genetic :as genetic])
-	(:require [npuzzles.astar :as efficient])
+	(:require [npuzzles.astar :as astar])
 	(:require [clojure.data.priority-map :as pmap])
     (:require [clojure.tools.cli :refer [cli]])
 	(:gen-class))
@@ -48,8 +48,8 @@
                             (if (or (nil? heuristic) (not (:heuristic (meta heuristic))))
                                 (println "Invalid heuristic function.")
                                 (println
-                                  (time-tests trials (resolve 'npuzzles.astar_efficient/solve) [rows cols heuristic]))))                            
-                        (catch Exception e (println "Invalid input to astar (see readme)"))))
+                                  (time-tests trials (resolve 'npuzzles.astar/solve) [rows cols heuristic]))))                            
+                        (catch Exception e (println "Invalid input."))))
                 (if (= "genetic" (:alg opts))
                         (if (not (= (count args) 7))
                             (println "Invalid input to genetic (see readme)")
@@ -76,7 +76,7 @@
                         (if (not (puzzle/solvable? puzzle))
                             (println "Unsolvable input!")
                             (println (case (:alg opts)
-                                "astar" (efficient/solve puzzle puzzle/manhattan-distance)
+                                "astar" (astar/solve puzzle puzzle/manhattan-distance)
                                 "genetic" (let [solution (genetic/solve puzzle)]
                                         (if (nil? solution)
                                             "Genetic algorithm failed to solve puzzle – try again!"
