@@ -146,3 +146,14 @@ phases: 5
 accuracy: 33/100
 total time: 4638.848504199
 average time: 46.388485042
+
+With linear conflict heuristic
+trials: 100
+puzzle size: 3x3
+pop-size: 200
+generations: 500
+phases: 5
+
+accuracy: 99/100
+total time: 3137.028180018
+average time: 31.3702818
