@@ -122,11 +122,13 @@
 				  row (row-of-tile puzzle hd)
 				  out_of_row (not= final_row row) 
 				  out_of_col (not= final_col column)]
-		    (if (and out_of_row out_of_col)
-		    	(recur (+ d 2) tl)
-		    	(if (or out_of_row out_of_col)
-		    		(recur (+ d 1) tl)
-		    	    (recur d tl)))))))
+		    (if (= hd 0)
+		    	(recur d tl)
+			    (if (and out_of_row out_of_col)
+			    	(recur (+ d 2) tl)
+			    	(if (or out_of_row out_of_col)
+			    		(recur (+ d 1) tl)
+			    	    (recur d tl))))))))
 
 (def ^:heuristic tiles-out-of (memo/memo tiles-out-of-helper))
 		  

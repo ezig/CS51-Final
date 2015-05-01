@@ -151,7 +151,7 @@
 		    (is (= (tiles-out-of p2) 0))
 		    (is (= (tiles-out-of p3) 0))
 		    (is (= (tiles-out-of p4) 4))
-		    (is (= (tiles-out-of p5) 7))))
+		    (is (= (tiles-out-of p5) 8))))
 
 (deftest solved?-test
 	(testing "solved?")
