@@ -14,7 +14,7 @@ of our second implementation and as a tool for reflection in the write-up.
 
 ; These are helper functions for the naive implementation of the A* best-first
 ; search algorithm. 
-(defn init-queue 
+(defn- init-queue 
   "Given a puzzle, returns a Priority Queue with one element: a
      TreePuzzle with nil parent, depth g = 0, and appropriate h 
      given by the heuristic function."
@@ -40,7 +40,7 @@ of our second implementation and as a tool for reflection in the write-up.
    [(pqueue 0) (vec (rest pqueue))]))
 
 
-(defnp member 
+(defn- member 
   "Given a tree-puzzle and a vector of tree-puzzles, returns a vector containing
   an updated vector of tree-puzzles and a boolean. The boolean indicates whether
   or not the tpuzzle should be inserted into the vector of tree-puzzles."
@@ -88,7 +88,7 @@ of our second implementation and as a tool for reflection in the write-up.
       
 ; TODO 
 
-(defn step 
+(defn- step 
   "Dequeues a puzzle off the priority queue, checks if it is equal to the
   goal state (by calling solved?). If it is, return the TreePuzzle; if not, insert the child
   nodes into the priority queue and recursively pass the new priority queue into step.

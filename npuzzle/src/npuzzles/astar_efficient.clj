@@ -1,8 +1,7 @@
 (ns npuzzles.astar_efficient
   (:use [npuzzles.puzzle])
   (:use [npuzzles.tree_puzzle])
-  (:require [clojure.data.priority-map :as pmap])
-  (:require [taoensso.timbre.profiling :as profiling :refer (pspy pspy* profile defnp p p*)]))
+  (:require [clojure.data.priority-map :as pmap]))
   
 (comment
 Here we improve apon the naive implementation on the A* best-first search algorithm
@@ -24,7 +23,7 @@ priority map). This resulted in a fifty times performance improvement.
     (< (:h val1) (:h val2))))
   
 ;Public Functions
-(defn init-queue 
+(defn- init-queue 
   "Given a puzzle, returns a Priority Queue with one element: a
      TreePuzzle with nil parent, depth g = 0, and appropriate h 
      given by the heuristic function."
@@ -71,7 +70,7 @@ priority map). This resulted in a fifty times performance improvement.
             (recur newpuzzles newqueue visited)))))))))
                
 
-(defnp step 
+(defn- step 
 	"Dequeues a puzzle off the priority queue, checks if it is equal to the
 	goal state (by calling solved?). If it is, return the TreePuzzle; if not, insert the child
 	nodes into the priority queue and recursively pass the new priority queue into step.
@@ -88,9 +87,9 @@ priority map). This resulted in a fifty times performance improvement.
                (assoc closed (:tiles (:puzzle tpuzzle)) (:h tpuzzle)))]
        		(do  (recur new-open new-closed))))))))
 
-(defnp solve
+(defn solve
   "Given a initial puzzle state, returns the sequence of puzzles needed to go from that 
   puzzle state to the goal state."
   [puzzle heuristic] 
-   (map-solution (step (init-queue puzzle heuristic) heuristic)))
+   (into [] (map-solution (step (init-queue puzzle heuristic) heuristic))))
 
