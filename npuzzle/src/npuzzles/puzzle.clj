@@ -154,13 +154,13 @@
 				  current_row (subvec idx_vec row_hd_idx row_tl_idx)
 				  c_row_belongs (filter #(and(>= % row_hd_idx) (< % row_tl_idx)) current_row)]
 				  (recur (+ d (* (inversions-vector c_row_belongs) 2)) (dec cnt) idx_vec))))))
+
 (defn- linear-conflict-manhattan-helper
 	"uses manhattan-distance in combination with linear-conflict for more accurate heuristic"
 	[{cols :cols rows :rows tiles :tiles :as puzzle}]
-	(+ (linear-conflict-helper puzzle) (manhattan-distance-helper puzzle))
-	)
+	(+ (linear-conflict-helper puzzle) (manhattan-distance-helper puzzle)))
 
-(def ^:heuristic linear-conflict(memo/memo linear-conflict-manhattan-helper))
+(def ^:heuristic linear-conflict (memo/memo linear-conflict-manhattan-helper))
 
 
 (defn misplaced-tiles-helper
