@@ -12,6 +12,21 @@
     [opts]
     (not-every? opts required-opts))
 
+(defn- validate-puzzle
+    "Raises an exception if the input parameters for puzzle are Invalid
+    (the requirements are that the number of rows
+    and columns correspond to the number of tiles in the puzzle, that
+    the puzzle is at least of dimension 2 in each direction, and that the only
+    tiles in the puzzle are the tiles in the range [0, rows * cols - 1])"
+    [rows cols tiles]
+    (if (and 
+            (= (* rows cols) (count tiles))
+            (> rows 1)
+            (> cols 1)
+            (= (range 0 (dec (count tiles))) (sort tiles)))
+        nil
+        (throw (Exception. "Invalid puzzle construction."))))
+
 (defn time-tests
     "Given a number of trials, a solving function, and a list of arguments to 
     the solving function (the first two of which must be row/column arguments
@@ -50,6 +65,7 @@
                               rows (Integer. (args 1))
                               cols (Integer. (args 2))
                               heuristic (resolve (symbol (str "npuzzles.puzzle/" (args 3))))]
+                            (validate-puzzle rows cols (range (* rows cols)))
                             (if (or (nil? heuristic) (not (:heuristic (meta heuristic))))
                                 (println "Invalid heuristic function.")
                                 (println
@@ -66,6 +82,7 @@
                                       phases (Integer. (args 4))
                                       gens (Integer. (args 5))
                                       heuristic (resolve (symbol (str "npuzzles.puzzle/" (args 6))))]
+                                (validate-puzzle rows cols (range (* rows cols)))
                                 (if (or (nil? heuristic) (not (:heuristic (meta heuristic))))
                                     (println "Invalid heuristic function.")
                                     (println
@@ -79,7 +96,10 @@
                 ; Try to convert the input into a puzzle and solve it
                 (try 
                     (let [tiles (into [] (map #(- (int %) 48) (args 2)))
-                          puzzle (puzzle/gen-puzzle (Integer. (args 0)) (Integer. (args 1)) tiles)]
+                          rows (Integer. (args 0))
+                          cols (Integer. (args 1))
+                          puzzle (puzzle/gen-puzzle rows cols tiles)]
+                        (validate-puzzle rows cols tiles)
                         (if (not (puzzle/solvable? puzzle))
                             (println "Unsolvable input!")
                             (println (case (:alg opts)
