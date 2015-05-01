@@ -23,7 +23,7 @@ priority map). This resulted in a fifty times performance improvement.
     (< (:h val1) (:h val2))))
   
 ;Public Functions
-(defn- init-queue 
+(defn init-queue 
   "Given a puzzle, returns a Priority Queue with one element: a
      TreePuzzle with nil parent, depth g = 0, and appropriate h 
      given by the heuristic function."
@@ -42,10 +42,11 @@ priority map). This resulted in a fifty times performance improvement.
  [(second (first pqueue)) (pop pqueue)])
 
 (defn- insert-children 
-	"Given a list of TreePuzzles and a priority queue of TreePuzzles, inserts
-	 each TreePuzzles in the list into its appropriate position in the priority
-	 queue based on its cost value h (lower cost = higher priority).
-	 Returns the updated queue."
+	"Given a list of TreePuzzles to insert, a priority queue of TreePuzzles to 
+   visit, and a hash-map of TreePuzzles already inserted, inserts
+   each TreePuzzles in the list into its appropriate position in the priority
+   queue based on its cost value h (lower cost = higher priority).
+   Returns the updated queue."
 	[tree-puzzles open closed]
 	(loop [puzzles tree-puzzles newqueue open visited closed]
 		(if (= puzzles [])
@@ -70,7 +71,7 @@ priority map). This resulted in a fifty times performance improvement.
             (recur newpuzzles newqueue visited)))))))))
                
 
-(defn- step 
+(defn step 
 	"Dequeues a puzzle off the priority queue, checks if it is equal to the
 	goal state (by calling solved?). If it is, return the TreePuzzle; if not, insert the child
 	nodes into the priority queue and recursively pass the new priority queue into step.
