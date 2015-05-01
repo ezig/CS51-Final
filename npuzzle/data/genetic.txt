@@ -157,3 +157,14 @@ phases: 5
 accuracy: 99/100
 total time: 3137.028180018
 average time: 31.3702818
+
+With tiles-out-of heuristic
+trials: 100
+puzzle size: 3x3
+pop-size: 200
+generations: 500
+phases: 5
+
+accuracy: 77/100
+total time: 3979.574526834
+average time: 39.795745268
