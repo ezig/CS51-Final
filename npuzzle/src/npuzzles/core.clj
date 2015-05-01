@@ -3,6 +3,7 @@
 	(:require [npuzzles.genetic :as genetic])
 	(:require [npuzzles.astar :as astar])
     (:require [clojure.tools.cli :refer [cli]])
+    (:use [clojure.string :only (split triml)])
 	(:gen-class))
 
 (def required-opts #{:alg})
@@ -19,6 +20,7 @@
     the puzzle is at least of dimension 2 in each direction, and that the only
     tiles in the puzzle are the tiles in the range [0, rows * cols - 1])"
     [rows cols tiles]
+    (println tiles)
     (if (and 
             (= (* rows cols) (count tiles))
             (> rows 1)
@@ -94,7 +96,7 @@
                 (println "Invalid input to puzzle solve mode (see readme)")
                 ; Try to convert the input into a puzzle and solve it
                 (try 
-                    (let [tiles (into [] (map #(- (int %) 48) (args 2)))
+                    (let [tiles (into [] (map #(Integer. %) (split (args 2) #"\s+")))
                           rows (Integer. (args 0))
                           cols (Integer. (args 1))
                           puzzle (puzzle/gen-puzzle rows cols tiles)]
