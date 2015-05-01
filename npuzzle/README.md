@@ -9,7 +9,7 @@ download the source as a zip.
 
 ## Usage
 
-A compiled java executable version of the project is in the src/uberjar folder
+A compiled java executable version of the project is in the target/uberjar folder
 To run the file from that directory, run 
 
     $ java -jar npuzzles-1.0-standalone.jar [args]
@@ -35,7 +35,9 @@ are two integers, row and column (integers), and a string of integers representi
 from left to right top to bottom order. So, for example, to solve the following puzzle using a genetic algorithm
 
 123
+
 456
+
 708
 
 We would run
@@ -45,6 +47,7 @@ We would run
 And we could solve this puzzle by astar
 
 312
+
 504
 
 	$ java -jar npuzzles-1.0-standalone.jar -a astar 2 3 312504
