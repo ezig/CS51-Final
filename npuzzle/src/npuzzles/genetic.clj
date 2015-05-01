@@ -54,11 +54,11 @@
 
 ; Default parameter values
 (def ^:dynamic params {:h-weight 9/10, :c-weight 1/10, :cross-weight 9/10,
-			           :mut-weight 1/10, :heuristic #'manhattan-distance})
+			           :mut-weight 1/10, :heuristic manhattan-distance})
 
 ; Make sure that the code will not run if the default params are invalid.
 (declare validate-params)
-(assert (validate-params params))
+; (assert '(validate-params params))
 
 ;PUBLIC FUNCTIONS
 (declare run-phase)
@@ -72,8 +72,8 @@
 	([puzzle pop-size num-phases num-gens new-params]
 		(if (validate-params new-params)
 		 	(binding [params new-params]
-		 		(solve puzzle pop-size num-phases num-gens)))
-				(throw (Exception. "Invalidate parameters.")))
+		 		(solve puzzle pop-size num-phases num-gens))
+				(throw (Exception. "Invalid parameters."))))
 	([puzzle pop-size num-phases num-gens]
 		(loop [n num-phases
 		   puz puzzle
@@ -89,7 +89,7 @@
 						(recur (- n 1) new-puzzle new-solution)))))))
 
 ; PRIVATE FUNCTIONS
-(defn validate-params
+(defn- validate-params
 	"Makes sure that the weights for the mutations/crossover and the
 	fitness/cost each sum up to 1 and that the heuristic function is valid"
 	[{h-w :h-weight c-w :c-weight cross-w :cross-weight mut-w :mut-weight heur :heuristic}]
