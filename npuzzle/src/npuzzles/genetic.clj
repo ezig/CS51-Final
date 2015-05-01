@@ -56,19 +56,20 @@
 (def ^:dynamic params {:h-weight 9/10, :c-weight 1/10, :cross-weight 9/10,
 			           :mut-weight 1/10, :heuristic manhattan-distance})
 
-; Make sure that the code will not run if the default params are invalid.
-(declare validate-params)
-; (assert '(validate-params params))
-
 ;PUBLIC FUNCTIONS
 (declare run-phase)
 (declare interpret-chromosome)
+(declare validate-params)
+(declare optimal-settings)
 (defn solve
 	"Given a puzzle, an initial population size, and specified numbers of
 	 generations and phases, runs the genetic algorithm
 	 until either a solution is found, in which case the vector of moves that
 	 solved the chromosome is returned, or Nil if a solution is not found 
 	 within the specified limits"
+	([puzzle]
+		(let [opt (optimal-settings puzzle)]
+			(solve puzzle (opt 0) (opt 1) (opt 2))))
 	([puzzle pop-size num-phases num-gens new-params]
 		(if (validate-params new-params)
 		 	(binding [params new-params]
@@ -89,6 +90,16 @@
 						(recur (- n 1) new-puzzle new-solution)))))))
 
 ; PRIVATE FUNCTIONS
+(defn- optimal-settings
+	"Give a puzzle, returns the default optimal settings for that puzzle size
+	in a vector in the order population size, phases, number of generations"
+	[puzzle]
+	(let [mult (* (:rows puzzle) (:cols puzzle))]
+		(cond
+		 	(< mult 5) [10 1 10]
+		 	(< mult 9) [100 2 100]
+		 	:else [200 5 500])))
+
 (defn- validate-params
 	"Makes sure that the weights for the mutations/crossover and the
 	fitness/cost each sum up to 1 and that the heuristic function is valid"
