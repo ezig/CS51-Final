@@ -140,27 +140,47 @@
 			(let [hd (first lst) tl (rest lst)]
 				(recur (+ inv (count (filter #(< % hd) tl))) tl)))))
 
-(defn- linear-conflict-helper
+(defn- row-conflict-helper
 	"Given a Puzzle, calculates the amount of linear conflict in the puzzle
 	allowing for more accurate fitness when added to Manhattan Distance"
 	[{cols :cols rows :rows tiles :tiles :as puzzle}]
 	(let [lst tiles
 		  goal_index_vec (into [] (map #(mod (- % 1) (* rows cols)) lst))] 
 		(loop [d 0 cnt (- rows 1) idx_vec goal_index_vec]
-			(if (zero? cnt)
+			(if (= -1 cnt)
 			d
 			(let [row_hd_idx (* cnt cols)
 				  row_tl_idx (+ (* cnt cols) cols)
 				  current_row (subvec idx_vec row_hd_idx row_tl_idx)
 				  c_row_belongs (filter #(and(>= % row_hd_idx) (< % row_tl_idx)) current_row)]
 				  (recur (+ d (* (inversions-vector c_row_belongs) 2)) (dec cnt) idx_vec))))))
-(defn- linear-conflict-manhattan-helper
+
+(defn drop-nth [n coll] 
+	(lazy-seq 
+    	(when-let [s (seq coll)] 
+    		(concat (take n s) (drop-nth n (next (drop n s))))))) 
+
+(defn- column-conflict-helper
+	"Given a Puzzle, calculate the amount of column conflicts in the puzzle"
+	[{cols :cols rows :rows tiles :tiles :as puzzle}]
+	(let [lst tiles
+		  goal_index_vec (into [] (map #(mod (- % 1) (* rows cols)) lst))] 
+		(loop [d 0 cnt (- cols 1) idx_vec goal_index_vec]
+			(if (= -1 cnt)
+			d
+			(let [current_column (take-nth (+ cnt 1) goal_index_vec)
+				c_column_belongs (filter #(= (mod (+ 1 cnt) cols) (mod % cols)) idx_vec)]
+				(recur (+ d (* (inversions-vector c_column_belongs) 2)) (dec cnt) (vec (drop-nth cnt idx_vec))
+		)))  
+	)))
+
+(defn- linear-conflict
 	"uses manhattan-distance in combination with linear-conflict for more accurate heuristic"
 	[{cols :cols rows :rows tiles :tiles :as puzzle}]
-	(+ (linear-conflict-helper puzzle) (manhattan-distance-helper puzzle))
+	(+ (row-conflict-helper puzzle) (column-conflict-helper puzzle))
 	)
 
-(def ^:heuristic linear-conflict(memo/memo linear-conflict-manhattan-helper))
+(def ^:heuristic linear-conflict(memo/memo linear-conflict))
 
 
 (defn misplaced-tiles-helper
@@ -176,25 +196,6 @@
 
 ;Memoized version of misplace-tiles-helper
 (def ^:heuristic misplaced-tiles (memo/memo misplaced-tiles-helper))
-
-(defn euclidean-distance-helper
-	[{rows :rows cols :cols tiles :tiles :as puzzle}]
-	(loop [d 0 lst tiles]
-		(if (empty? lst) 
-			d
-			(let [hd (first lst) tl (rest lst)
- 	     		  final_index (mod (- hd 1) (* rows cols))
-	 	     	  final_row (quot final_index cols)
-	 	     	  final_col (mod final_index cols)
-				  column (col-of-tile puzzle hd)
-				  row (row-of-tile puzzle hd)
-				  xd (- final_row row)
-				  yd (- final_col column)]
-		    (if (= hd 0) 
-	     		(recur d tl)
-		    	(recur (+ d (math/sqrt (+ (* xd xd) (* yd yd)))) tl))))))
-
-(def ^:heuristic euclidean-distance (memo/memo euclidean-distance-helper))
 
 
 (declare inversions)
