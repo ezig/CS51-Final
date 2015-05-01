@@ -103,7 +103,6 @@
 
 (deftest solvable?-test
 	(testing "solvable?")
-		(def solvable? #'puzzle/solvable?)
 		(let [p1 (gen-puzzle 4 4 [12 1 10 2 7 11 4 14 5 0 9 15 8 13 6 3])
 			  p2 (gen-puzzle 3 3 [7 1 2 5 0 9 8 3 6])
 			  p3 (gen-puzzle 3 5 [6 1 2 4 5 7 3 0 14 9 11 12 8 13 10])
