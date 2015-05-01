@@ -154,7 +154,7 @@
 
 (defn- fitness
 	"Given a chromosome, determines the fitness,
-	(right now, this is just the manhattan-distance of the final puzzle state 
+	(right now, this is just based on the heuristic that was passed in to interpret the final puzzle state
 	that corresponds to interpreting the chromosome as a list of moves relative
 	to the puzzle)"
 	[chromosome puzzle]
