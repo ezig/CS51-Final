@@ -30,17 +30,6 @@ priority map). This resulted in a fifty times performance improvement.
              childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-tree hueristic) childPuzzles)]
         (vec (filter #(not= (:tiles (:puzzle %)) parentTiles) childPuzzleTrees))))
 
-(defn- map-solution
-  "Given the return value of solve (a TreePuzzle node thatcorresponds to the goal state), 
-  the function returns a list of Puzzles that correspond to the optimal path found by A* 
-  by retracing the path back to the starting node (through the Parent nodes of each
-  TreePuzzle until you reach the node with the nil parent)."
-  [tpuzzle]
-  (loop [puz tpuzzle dlist ()]
-      (if (nil? (:parent puz))
-          dlist
-          (recur (:parent puz) (cons (dir-between (:puzzle (:parent puz)) (:puzzle puz)) dlist)))))
-
 (defn- queue-sort 
   "Used to sort priority queues. Lowest cost comes first, if there is a tie
   breaker we compare the integer representation of a puzzle (e.g. [0 1 2 3] = 
@@ -119,9 +108,21 @@ priority map). This resulted in a fifty times performance improvement.
                (assoc closed (:tiles (:puzzle tpuzzle)) (:h tpuzzle)))]
        		(do  (recur new-open new-closed))))))))
 
+(defn- map-solution
+  "Given the return value of solve (a TreePuzzle node thatcorresponds to the goal state), 
+  the function returns a list of directions that correspond to the optimal path found by A* 
+  by retracing the path back to the starting node (through the Parent nodes of each
+  TreePuzzle until you reach the node with the nil parent)."
+  [tpuzzle]
+  (loop [puz tpuzzle dlist ()]
+      (if (nil? (:parent puz))
+          dlist
+          (recur (:parent puz) (cons (dir-between (:puzzle (:parent puz)) (:puzzle puz)) dlist)))))
+
+
 ; Public function
 (defn solve
-  "Given a initial puzzle state, returns the sequence of puzzles needed to go from that 
+  "Given a initial puzzle state, returns the sequence of directions needed to go from that 
   puzzle state to the goal state."
   [puzzle heuristic] 
    (into [] (map-solution (step (init-queue puzzle heuristic) heuristic))))
