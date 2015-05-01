@@ -36,7 +36,6 @@
     (time 
         (loop [n trials
                successes 0]
-            (println n)
             (if (zero? n)
                 (str "Accuracy: " successes "/" trials)
                 (let [puz (puzzle/gen-puzzle (args 0) (args 1))]
