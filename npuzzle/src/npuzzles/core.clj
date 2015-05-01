@@ -39,7 +39,7 @@
         (when (:data opts)
             (if (= "astar" (:alg opts))
                 (if (not (= (count args) 4))
-                    (println "Invalid")
+                    (println "Invalid arguments to astar (see readme)")
                     (try
                         (let [trials (Integer. (args 0))
                               rows (Integer. (args 1))
@@ -52,7 +52,7 @@
                         (catch Exception e (println "Invalid input."))))
                 (if (= "genetic" (:alg opts))
                         (if (not (= (count args) 7))
-                            (println "Invalid")
+                            (println "Invalid input to genetic (see readme)")
                             (try
                                 (let [trials (Integer. (args 0))
                                       rows (Integer. (args 1))
@@ -65,11 +65,11 @@
                                     (println "Invalid heuristic function.")
                                     (println
                                       (time-tests trials (resolve 'npuzzles.genetic/solve) [rows cols pop-size phases gens heuristic]))))                           
-                                (catch Exception e (println "Invalid input."))))
+                                (catch Exception e (println "Invalid input to genetic (see readme)"))))
                         (println "Invalid algorithm choice"))))
         (when-not (:data opts)
             (if (not (= (count args) 3))
-                (println "Invalid")
+                (println "Invalid input to puzzle solve mode (see readme)")
                 (try 
                     (let [tiles (into [] (map #(- (int %) 48) (args 2)))
                           puzzle (puzzle/gen-puzzle (Integer. (args 0)) (Integer. (args 1)) tiles)]
@@ -79,7 +79,7 @@
                                 "astar" (astar/solve puzzle puzzle/manhattan-distance)
                                 "genetic" (let [solution (genetic/solve puzzle)]
                                         (if (nil? solution)
-                                            "Genetic algorithm could not solve puzzle."
+                                            "Genetic algorithm failed to solve puzzle – try again!"
                                             solution))
                                 "Invalid algorithm choice."))))
                     (catch Exception e (println "Invalid input puzzle")))))))
