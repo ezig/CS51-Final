@@ -44,13 +44,15 @@ We would run
 
 	$ java -jar npuzzles-1.0-standalone.jar -a genetic 3 3 123456708 
 
-And we could solve this puzzle by astar
+And we could try to solve this puzzle by astar:
 
 312
 
 504
 
 	$ java -jar npuzzles-1.0-standalone.jar -a astar 2 3 312504
+
+But the program will warn you that this puzzle is not solvable!
 
 In data collection mode (triggered by -d flag):
 
