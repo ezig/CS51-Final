@@ -142,7 +142,7 @@
 			(let [hd (first lst) tl (rest lst)]
 				(recur (+ inv (count (filter #(< % hd) tl))) tl)))))
 
-(defn- row-conflict-helper
+(defn- linear-conflict-helper
 	"Given a Puzzle, calculates the amount of linear conflict in the puzzle
 	allowing for more accurate fitness when added to Manhattan Distance"
 	[{cols :cols rows :rows tiles :tiles :as puzzle}]
@@ -157,42 +157,12 @@
 				  c_row_belongs (filter #(and(>= % row_hd_idx) (< % row_tl_idx)) current_row)]
 				  (recur (+ d (* (inversions-vector c_row_belongs) 2)) (dec cnt) idx_vec))))))
 
-<<<<<<< HEAD
-(defn drop-nth [n coll] 
-	(lazy-seq 
-    	(when-let [s (seq coll)] 
-    		(concat (take n s) (drop-nth n (next (drop n s))))))) 
-
-(defn- column-conflict-helper
-	"Given a Puzzle, calculate the amount of column conflicts in the puzzle"
-	[{cols :cols rows :rows tiles :tiles :as puzzle}]
-	(let [lst tiles
-		  goal_index_vec (into [] (map #(mod (- % 1) (* rows cols)) lst))] 
-		(loop [d 0 cnt (- cols 1) idx_vec goal_index_vec]
-			(if (= -1 cnt)
-			d
-			(let [current_column (take-nth (+ cnt 1) goal_index_vec)
-				c_column_belongs (filter #(= (mod (+ 1 cnt) cols) (mod % cols)) idx_vec)]
-				(recur (+ d (* (inversions-vector c_column_belongs) 2)) (dec cnt) (vec (drop-nth cnt idx_vec))
-		)))  
-	)))
-
-(defn- linear-conflict
-	"uses manhattan-distance in combination with linear-conflict for more accurate heuristic"
-	[{cols :cols rows :rows tiles :tiles :as puzzle}]
-	(+ (row-conflict-helper puzzle) (column-conflict-helper puzzle))
-	)
-
-(def ^:heuristic linear-conflict(memo/memo linear-conflict))
-=======
 (defn- linear-conflict-manhattan-helper
 	"uses manhattan-distance in combination with linear-conflict for more accurate heuristic"
 	[{cols :cols rows :rows tiles :tiles :as puzzle}]
 	(+ (linear-conflict-helper puzzle) (manhattan-distance-helper puzzle)))
 
 (def ^:heuristic linear-conflict (memo/memo linear-conflict-manhattan-helper))
->>>>>>> 6007f9664d073f83cfd6040d36cd32f37841d00f
-
 
 (defn misplaced-tiles-helper
 	[{tiles :tiles}]
