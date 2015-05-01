@@ -1,8 +1,7 @@
 (ns npuzzles.core
 	(:require [npuzzles.puzzle :as puzzle])
 	(:require [npuzzles.genetic :as genetic])
-	(:require [npuzzles.astar_naive :as naive])
-	(:require [npuzzles.astar_efficient :as efficient])
+	(:require [npuzzles.astar :as efficient])
 	(:require [clojure.data.priority-map :as pmap])
     (:require [clojure.tools.cli :refer [cli]])
 	(:gen-class))

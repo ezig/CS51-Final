@@ -1,6 +1,5 @@
 (ns npuzzles.astar_efficient
   (:use [npuzzles.puzzle])
-  (:use [npuzzles.tree_puzzle])
   (:require [clojure.data.priority-map :as pmap]))
   
 (comment
@@ -8,6 +7,39 @@ Here we improve apon the naive implementation on the A* best-first search algori
 by harnessing the power of Clojure's built-in map datatypes (hash-map and 
 priority map). This resulted in a fifty times performance improvement. 
 )
+
+; Defines the TreePuzzle data type
+(defrecord TreePuzzle [puzzle parent g h])
+
+; Private Functions 
+(defn- puzzle-to-tree 
+  [puz depth parent hueristic]
+  (let [distance (+ depth (hueristic puz))]
+       {:puzzle puz, :parent parent, :g depth, :h distance}))
+
+(defn- gen-children 
+  "Given a TreePuzzle, generates all possible subsequent puzzle states
+     by mapping slide over the result from a puzzle/valid-directions call.
+     We then map over the children and remove them if they are equal to the
+     puzzles parent node (we dont want to backtrack). Returns a list
+     containing the filtered list of child TreePuzzles."
+  [{current-state :puzzle, parent :parent, depth :g :as current-tree} hueristic]
+       (let [parentTiles (:tiles (:puzzle parent))
+             directions (valid-directions current-state)
+             childPuzzles (map #(slide current-state %) directions)
+             childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-tree hueristic) childPuzzles)]
+        (vec (filter #(not= (:tiles (:puzzle %)) parentTiles) childPuzzleTrees))))
+
+(defn- map-solution
+  "Given the return value of solve (a TreePuzzle node thatcorresponds to the goal state), 
+  the function returns a list of Puzzles that correspond to the optimal path found by A* 
+  by retracing the path back to the starting node (through the Parent nodes of each
+  TreePuzzle until you reach the node with the nil parent)."
+  [tpuzzle]
+  (loop [puz tpuzzle dlist ()]
+      (if (nil? (:parent puz))
+          dlist
+          (recur (:parent puz) (cons (dir-between (:puzzle (:parent puz)) (:puzzle puz)) dlist)))))
 
 (defn- queue-sort 
   "Used to sort priority queues. Lowest cost comes first, if there is a tie
@@ -22,7 +54,6 @@ priority map). This resulted in a fifty times performance improvement.
        (read-string (clojure.string/join (cons 1 (:tiles (:puzzle val2))))))
     (< (:h val1) (:h val2))))
   
-;Public Functions
 (defn- init-queue 
   "Given a puzzle, returns a Priority Queue with one element: a
      TreePuzzle with nil parent, depth g = 0, and appropriate h 
@@ -87,6 +118,7 @@ priority map). This resulted in a fifty times performance improvement.
                (assoc closed (:tiles (:puzzle tpuzzle)) (:h tpuzzle)))]
        		(do  (recur new-open new-closed))))))))
 
+; Public function
 (defn solve
   "Given a initial puzzle state, returns the sequence of puzzles needed to go from that 
   puzzle state to the goal state."
