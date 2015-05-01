@@ -149,7 +149,7 @@
 	(let [lst tiles
 		  goal_index_vec (into [] (map #(mod (- % 1) (* rows cols)) lst))] 
 		(loop [d 0 cnt (- rows 1) idx_vec goal_index_vec]
-			(if (zero? cnt)
+			(if (= -1 cnt)
 			d
 			(let [row_hd_idx (* cnt cols)
 				  row_tl_idx (+ (* cnt cols) cols)
