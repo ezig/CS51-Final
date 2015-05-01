@@ -20,11 +20,12 @@
     the puzzle is at least of dimension 2 in each direction, and that the only
     tiles in the puzzle are the tiles in the range [0, rows * cols - 1])"
     [rows cols tiles]
+    (println tiles)
     (if (and 
             (= (* rows cols) (count tiles))
             (> rows 1)
             (> cols 1)
-            (range 0 (count tiles)) (sort tiles))
+            (= (range 0 (count tiles)) (sort tiles)))
         nil
         (throw (Exception. "Invalid puzzle construction."))))
 
