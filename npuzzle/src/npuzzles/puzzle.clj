@@ -154,7 +154,7 @@
 			(let [row_hd_idx (* cnt cols)
 				  row_tl_idx (+ (* cnt cols) cols)
 				  current_row (subvec idx_vec row_hd_idx row_tl_idx)
-				  c_row_belongs (filter #(and(>= % row_hd_idx) (< % row_tl_idx)) current_row)]
+				  c_row_belongs (filter #(and(>= % row_hd_idx) (and (< % row_tl_idx) (not= % 8))) current_row)]
 				  (recur (+ d (* (inversions-vector c_row_belongs) 2)) (dec cnt) idx_vec))))))
 
 (defn- linear-conflict-manhattan-helper
