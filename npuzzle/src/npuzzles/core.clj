@@ -40,6 +40,7 @@
 (defn time-tests
     ""
     [trials fun args]
+    (println fun)
     (time 
         (loop [n trials
                successes 0]
@@ -48,8 +49,6 @@
                 (if (apply fun args)
                     (recur (dec n) (inc successes))
                     (recur (dec n) successes))))))
-    ; (let [successes (time (reduce #(if (eval fun) (+ 1 %1) %1) (range trials)))]
-    ;     (str "Accuracy: " successes "/" trials)))
 
 (defn -main [& args]
     (let [[opts args banner] 
@@ -73,7 +72,24 @@
                                 (println "Invalid heuristic function.")
                                 (println
                                   (time-tests trials 'efficient/solve [(puzzle/gen-puzzle rows cols) heuristic]))))                            
-                        (catch Exception e (println "Invalid input."))))))
+                        (catch Exception e (println "Invalid input."))))
+                (if (= "genetic" (:alg opts))
+                        (if (not (= (count args) 7))
+                            (println "Invalid")
+                            (try
+                                (let [trials (Integer. (args 0))
+                                      rows (Integer. (args 1))
+                                      cols (Integer. (args 2))
+                                      pop-size (Integer. (args 3))
+                                      phases (Integer. (args 4))
+                                      gens (Integer. (args 5))
+                                      heuristic (resolve (symbol (str "npuzzles.puzzle/" (args 6))))]
+                                (if (or (nil? heuristic) (not (:heuristic (meta heuristic))))
+                                    (println "Invalid heuristic function.")
+                                    (println
+                                      (time-tests trials (resolve 'npuzzles.genetic/solve) [(puzzle/gen-puzzle rows cols) pop-size phases gens heuristic]))))                           
+                                (catch Exception e (println "Invalid input."))))
+                        (println "Invalid algorithm choice"))))
         (when-not (:data opts)
             (if (not (= (count args) 3))
                 (println "Invalid")
@@ -90,30 +106,3 @@
                                             solution))
                                 "Invalid algorithm choice."))))
                     (catch Exception e (println "Invalid input puzzle")))))))
-; 	; ;genetic arity arguments and body
-	; ([type trials height width popsize num-phases num-gens & new-params]
-	; (let [trials (read-string trials) 
-	; 	height (read-string height) 
-	; 	width (read-string width)
-	; 	popsize (read-string popsize)
-	; 	num-phases (read-string num-phases)
-	; 	num-gens (read-string num-gens)
-	; 	new-params (read-string new-params)]
-	; 	(cond 
-	; 		(re-matches #"(?i)genetic" type) 
-	; 		(dotimes [n trials] (genetic/solve (puzzle/gen-puzzle height width) popsize num-phases num-gens new-params)
-	; 		:else "input format should be main (solver type) (# of trials)"
-	; 		))))
-	; ;astar arity arguments and body
-	; ([type trials height width heuristic]
-	; (let [trials (read-string trials) 
-	; 	height (read-string height) 
-	; 	width (read-string width)]
-	; 	(cond (re-matches #"(?i)astar" type) 
-	; 		(dotimes [n trials] (efficient/solve (puzzle/gen-puzzle height width) heuristic))
-	; 		;(do(loop [cnt trials]
-	; 		;	(let [x (puzzle/gen-puzzle height width)]
-	; 		;		(map (fn [x] (print-str (puzzle/to-string x))) (efficient/solve x))
-	; 		;	(recur (- cnt 1)))))
-	; 		:else "input format should be main (solver type) (# of trials) (height) (width) then additional parameters"
-	; 		))))

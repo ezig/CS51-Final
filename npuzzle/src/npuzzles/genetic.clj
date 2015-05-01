@@ -71,9 +71,8 @@
 		(let [opt (optimal-settings puzzle)]
 			(solve puzzle (opt 0) (opt 1) (opt 2))))
 	([puzzle pop-size num-phases num-gens heuristic]
-		(if (validate-params new-params)
+		(if (validate-params (assoc params :heuristic heuristic))
 		 	(binding [params (assoc params :heuristic heuristic)]
-		 		(println "hey")
 		 		(solve puzzle pop-size num-phases num-gens))
 			(throw (Exception. "Invalid parameters."))))
 	([puzzle pop-size num-phases num-gens]
