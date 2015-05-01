@@ -42,7 +42,7 @@ from left to right top to bottom order. So, for example, to solve the following 
 
 We would run
 
-	$ java -jar npuzzles-1.0-standalone.jar -a genetic 3 3 123456708 
+	$ java -jar npuzzles-1.0-standalone.jar -a genetic 3 3 "1 2 3 4 5 6 7 0 8" 
 
 And we could try to solve this puzzle by astar:
 
@@ -50,7 +50,7 @@ And we could try to solve this puzzle by astar:
 
 504
 
-	$ java -jar npuzzles-1.0-standalone.jar -a astar 2 3 312504
+	$ java -jar npuzzles-1.0-standalone.jar -a astar 2 3 "3 1 2 5 0 4"
 
 But the program will warn you that this puzzle is not solvable!
 
