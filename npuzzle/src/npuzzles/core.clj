@@ -23,7 +23,7 @@
             (= (* rows cols) (count tiles))
             (> rows 1)
             (> cols 1)
-            (= (range 0 (dec (count tiles))) (sort tiles)))
+            (range 0 (count tiles)) (sort tiles))
         nil
         (throw (Exception. "Invalid puzzle construction."))))
 
