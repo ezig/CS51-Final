@@ -122,11 +122,13 @@
 				  row (row-of-tile puzzle hd)
 				  out_of_row (not= final_row row) 
 				  out_of_col (not= final_col column)]
-		    (if (and out_of_row out_of_col)
-		    	(recur (+ d 2) tl)
-		    	(if (or out_of_row out_of_col)
-		    		(recur (+ d 1) tl)
-		    	    (recur d tl)))))))
+		    (if (= hd 0)
+		    	(recur d tl)
+			    (if (and out_of_row out_of_col)
+			    	(recur (+ d 2) tl)
+			    	(if (or out_of_row out_of_col)
+			    		(recur (+ d 1) tl)
+			    	    (recur d tl))))))))
 
 (def ^:heuristic tiles-out-of (memo/memo tiles-out-of-helper))
 		  
@@ -155,6 +157,7 @@
 				  c_row_belongs (filter #(and(>= % row_hd_idx) (< % row_tl_idx)) current_row)]
 				  (recur (+ d (* (inversions-vector c_row_belongs) 2)) (dec cnt) idx_vec))))))
 
+<<<<<<< HEAD
 (defn drop-nth [n coll] 
 	(lazy-seq 
     	(when-let [s (seq coll)] 
@@ -181,6 +184,14 @@
 	)
 
 (def ^:heuristic linear-conflict(memo/memo linear-conflict))
+=======
+(defn- linear-conflict-manhattan-helper
+	"uses manhattan-distance in combination with linear-conflict for more accurate heuristic"
+	[{cols :cols rows :rows tiles :tiles :as puzzle}]
+	(+ (linear-conflict-helper puzzle) (manhattan-distance-helper puzzle)))
+
+(def ^:heuristic linear-conflict (memo/memo linear-conflict-manhattan-helper))
+>>>>>>> 6007f9664d073f83cfd6040d36cd32f37841d00f
 
 
 (defn misplaced-tiles-helper
