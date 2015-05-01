@@ -13,8 +13,10 @@ priority map). This resulted in a fifty times performance improvement.
 
 ; Private Functions 
 (defn- puzzle-to-tree 
-  [puz depth parent hueristic]
-  (let [distance (+ depth (hueristic puz))]
+  "Given a puzzle, a depth, a parent TreePuzzle node, and a heuristic function
+   returns a TreePuzzle child node."
+  [puz depth parent heuristic]
+  (let [distance (+ depth (heuristic puz))]
        {:puzzle puz, :parent parent, :g depth, :h distance}))
 
 (defn- gen-children 
@@ -23,11 +25,11 @@ priority map). This resulted in a fifty times performance improvement.
      We then map over the children and remove them if they are equal to the
      puzzles parent node (we dont want to backtrack). Returns a list
      containing the filtered list of child TreePuzzles."
-  [{current-state :puzzle, parent :parent, depth :g :as current-tree} hueristic]
+  [{current-state :puzzle, parent :parent, depth :g :as current-tree} heuristic]
        (let [parentTiles (:tiles (:puzzle parent))
              directions (valid-directions current-state)
              childPuzzles (map #(slide current-state %) directions)
-             childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-tree hueristic) childPuzzles)]
+             childPuzzleTrees (map #(puzzle-to-tree % (+ depth 1) current-tree heuristic) childPuzzles)]
         (vec (filter #(not= (:tiles (:puzzle %)) parentTiles) childPuzzleTrees))))
 
 (defn- queue-sort 
