@@ -14,5 +14,4 @@
 (deftest gen-chromosome
 	(testing "gen-chromosome")
 		(def gen-chromosome #'genetic/gen-chromosome)
-		(is (= 3 (count (gen-chromosome 3))))
-		(is (= )))
+		(is (= 3 (count (gen-chromosome 3)))))
