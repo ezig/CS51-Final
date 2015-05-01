@@ -158,13 +158,15 @@
 				  (recur (+ d (* (inversions-vector c_row_belongs) 2)) (dec cnt) idx_vec))))))
 
 (defn- linear-conflict-manhattan-helper
-	"uses manhattan-distance in combination with linear-conflict for more accurate heuristic"
+	"Uses manhattan-distance in combination with linear-conflict for more accurate heuristic"
 	[{cols :cols rows :rows tiles :tiles :as puzzle}]
 	(+ (linear-conflict-helper puzzle) (manhattan-distance-helper puzzle)))
 
 (def ^:heuristic linear-conflict (memo/memo linear-conflict-manhattan-helper))
 
 (defn misplaced-tiles-helper
+	"Given a puzzle, returns the number of tiles in the puzzle that are not in the same position as the 
+	corresponding tiles in the puzzle's goal state."
 	[{tiles :tiles}]
 	"Calculates the number of tiles that are in the , ignoring the zero tile"
 	(loop [tiles tiles indx 1 misplaced 0]
@@ -207,7 +209,7 @@
 			(= (- (:cols puzzle1)) diff) :down
 			:else nil)))
 
-; TODO can I combine check and visualize? seems like something is factorable
+
 (defn check-sol
 	"Given a puzzle and a vector of directions representing a solution,
 	slides the puzzle by the sequence of directions and returns true if the
