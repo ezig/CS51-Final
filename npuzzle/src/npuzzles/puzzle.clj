@@ -145,8 +145,8 @@
 	allowing for more accurate fitness when added to Manhattan Distance"
 	[{cols :cols rows :rows tiles :tiles :as puzzle}]
 	(let [lst tiles
-		  goal_index_vec (into [] (map #(mod (- % 1)) (* rows cols) lst))]
-		(loop [d 0 cnt rows idx_vec goal_index_vec]
+		  goal_index_vec (into [] (map #(mod (- % 1) (* rows cols)) lst))] 
+		(loop [d 0 cnt (- rows 1) idx_vec goal_index_vec]
 			(if (zero? cnt)
 			d
 			(let [row_hd_idx (* cnt cols)
@@ -154,8 +154,14 @@
 				  current_row (subvec idx_vec row_hd_idx row_tl_idx)
 				  c_row_belongs (filter #(and(>= % row_hd_idx) (< % row_tl_idx)) current_row)]
 				  (recur (+ d (* (inversions-vector c_row_belongs) 2)) (dec cnt) idx_vec))))))
+(defn- linear-conflict-manhattan-helper
+	"uses manhattan-distance in combination with linear-conflict for more accurate heuristic"
+	[{cols :cols rows :rows tiles :tiles :as puzzle}]
+	(+ (linear-conflict-helper puzzle) (manhattan-distance-helper puzzle))
+	)
 
-(def ^:heuristic linear-conflict (memo/memo linear-conflict-helper))
+(def ^:heuristic linear-conflict(memo/memo linear-conflict-manhattan-helper))
+
 
 (defn misplaced-tiles-helper
 	[{tiles :tiles}]

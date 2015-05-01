@@ -140,6 +140,19 @@
 			(is (= (misplaced-tiles p4) 3))
 			(is (= (misplaced-tiles p5) 6))))
 
+(deftest tiles-out-of-test 
+	(testing "tiles-out-of")
+		(let [p1 (gen-puzzle 3 3 [8 2 0 1 7 3 5 6 4])
+			  p2 (gen-puzzle 3 3 [1 2 3 4 5 6 7 8 0])
+			  p3 (gen-puzzle 2 2 [1 2 3 0])
+			  p4 (gen-puzzle 2 2 [0 1 2 3])
+			  p5 (gen-puzzle 3 4 [3 1 2 4 5 6 9 7 8 10 11 0])]
+		    (is (= (tiles-out-of p1) 12))
+		    (is (= (tiles-out-of p2) 0))
+		    (is (= (tiles-out-of p3) 0))
+		    (is (= (tiles-out-of p4) 4))
+		    (is (= (tiles-out-of p5) 7))))
+
 (deftest solved?-test
 	(testing "solved?")
 		(let [p1 (gen-puzzle 4 4 [12 1 10 2 7 11 4 14 5 0 9 15 8 13 6 3])
