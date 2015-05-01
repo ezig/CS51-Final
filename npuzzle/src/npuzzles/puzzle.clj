@@ -103,7 +103,13 @@
 ;Memoized version of manhattan-distance-helper
 (def ^:heuristic manhattan-distance (memo/memo manhattan-distance-helper))
 
-(defn tiles-out-of-row-col-helper
+(defn tiles-out-of-helper
+	"Given a puzzle, calculates the heuristic function 'tiles out of row and column'.
+	This function iterates through the tiles in a given puzzle and checks for the following 3 cases.
+	If a tile is either not in the row or column of the corresponding tile in the goal state, 1 is added
+	to the heuristic score. If a tile is neither in the row nor the column of the corresponding 
+	tile in the goal state then 2 is added to the score. If the tile is in its proper location, 
+	then the score remains unchanged."
 	[{cols :cols rows :rows tiles :tiles :as puzzle}]
 	(loop [d 0 lst tiles]
 	 	(if (empty? lst)
@@ -122,7 +128,7 @@
 		    		(recur (+ d 1) tl)
 		    	    (recur d tl)))))))
 
-(def ^:heuristic tiles-out-of-row-col (memo/memo tiles-out-of-row-col-helper))
+(def ^:heuristic tiles-out-of (memo/memo tiles-out-of-helper))
 		  
 
 (defn- inversions-vector
