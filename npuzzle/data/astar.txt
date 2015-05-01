@@ -18,6 +18,10 @@ Average 0.369823974
 Total time 200.737255083
 Average: 20.073725508
 
+3x3 manhattan-distance 100 puzzles
+Total time 42.46368304
+Average: 0.4246368304
+
 3x3 misplaced-tiles 100 puzzles
 Total time 904.829286404
 Average: 9.048292864
