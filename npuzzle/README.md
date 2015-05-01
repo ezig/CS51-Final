@@ -74,10 +74,10 @@ we could run
 	$ java -jar npuzzles-1.0-standalone.jar -d -a genetic 100 3 3 200 5 500 linear-conflict
 
 ## Currently Available Heuristic Functions
-manhattan-distance
-tiles-out-of
-linear-conflict
-misplaced-tiles
+* manhattan-distance
+* tiles-out-of
+* linear-conflict
+* misplaced-tiles
 
 ## License
 
